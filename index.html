@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Athletic Blueprint</title>
+<style>
+  :root {
+    --bg: #080B0F;
+    --surface: #0F1318;
+    --card: #141A21;
+    --border: #1E2730;
+    --text: #E8EDF2;
+    --muted: #7A8FA8;
+    --dim: #2D3748;
+    --accent: #00D4FF;
+    --green: #00E87A;
+    --orange: #FF6B2B;
+    --purple: #A855F7;
+    --red: #FF3B5C;
+    --yellow: #FFD60A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:520px;margin:0 auto;}
+  button{cursor:pointer;font-family:inherit;}
+
+  /* HEADER */
+  .header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 16px 0;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .logo{font-size:18px;font-weight:900;letter-spacing:-0.5px;}
+  .logo span{color:var(--accent);}
+  .week-pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;}
+  .week-pill b{color:var(--accent);}
+  .week-btn{background:none;border:none;color:var(--muted);font-size:16px;padding:0 2px;line-height:1;}
+  .week-btn:hover{color:var(--text);}
+  .phase-bar{display:flex;gap:4px;margin-bottom:10px;}
+  .phase-chip{flex:1;height:3px;border-radius:2px;background:var(--dim);}
+  .phase-chip.active{background:var(--accent);}
+  .phase-chip.done{background:var(--green);}
+
+  /* NAV TABS */
+  .tabs{display:flex;gap:4px;padding:0 0 12px;}
+  .tab{flex:1;padding:8px 4px;border:none;border-radius:8px;font-size:11px;font-weight:700;background:var(--card);color:var(--muted);transition:all 0.15s;}
+  .tab.active{background:var(--accent);color:#000;}
+
+  /* SCHEDULE */
+  .schedule{padding:14px 16px;padding-top:10px;}
+  .phase-info{background:linear-gradient(135deg,#0A1628,#0D1F1A);border:1px solid #1A3040;border-radius:12px;padding:13px 15px;margin-bottom:14px;}
+  .phase-title{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:4px;}
+  .phase-desc{font-size:12px;color:#A0B0C0;line-height:1.6;}
+  .phase-desc b{color:var(--text);}
+
+  .day-card{display:flex;align-items:center;width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:9px;text-align:left;transition:border-color 0.2s;}
+  .day-card:hover{border-color:var(--dim);}
+  .day-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;margin-right:12px;}
+  .day-meta{flex:1;min-width:0;}
+  .day-label{font-size:10px;font-weight:800;letter-spacing:1px;margin-bottom:2px;}
+  .day-name{font-size:15px;font-weight:700;margin-bottom:6px;}
+  .day-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;}
+  .tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:0.5px;}
+  .progress-track{height:3px;background:var(--dim);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;border-radius:2px;transition:width 0.4s;}
+  .day-arrow{color:var(--dim);font-size:18px;margin-left:10px;}
+
+  /* DAY DETAIL */
+  .day-detail{display:block;}
+  .day-header{padding:14px 16px;background:var(--surface);border-bottom:1px solid var(--border);}
+  .back-btn{background:none;border:none;font-size:13px;padding:0;margin-bottom:10px;display:block;}
+  .day-header-info{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .day-header-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+  .day-header-text .day-label{display:block;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:3px;}
+  .day-header-text .day-name{font-size:20px;font-weight:800;}
+  .day-note{border-radius:0 8px 8px 0;padding:9px 12px;margin-top:0;font-size:12px;color:var(--muted);line-height:1.5;border-left:3px solid;}
+  .day-progress-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;margin-bottom:6px;}
+  .day-progress-row span{font-size:12px;color:var(--muted);}
+  .reset-btn{background:none;border:1px solid var(--dim);border-radius:6px;color:var(--muted);font-size:11px;padding:3px 10px;}
+
+  .exercises-list{padding:12px 16px;}
+
+  /* SECTION HEADERS */
+  .section-header{display:flex;align-items:center;gap:8px;margin:16px 0 8px;padding:8px 10px;background:var(--surface);border-radius:8px;border-left:3px solid;}
+  .section-header span{font-size:12px;font-weight:800;letter-spacing:0.5px;}
+  .section-header small{font-size:10px;color:var(--muted);margin-left:auto;}
+
+  /* EXERCISE CARD */
+  .ex-card{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:7px;overflow:hidden;transition:border-color 0.2s;}
+  .ex-card.checked{opacity:0.55;}
+  .ex-card.bonus{border-style:dashed;}
+  .ex-card.bonus.unlocked{border-style:solid;border-color:var(--yellow);}
+  .ex-top{display:flex;align-items:center;padding:11px 12px;gap:10px;}
+  .ex-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--dim);background:none;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.15s;}
+  .ex-check.done{border-color:transparent;color:#000;}
+  .ex-info{flex:1;min-width:0;}
+  .ex-name{font-size:14px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:6px;}
+  .bonus-badge{font-size:9px;font-weight:800;padding:1px 5px;border-radius:3px;background:#2A2010;color:var(--yellow);border:1px solid #3A3010;}
+  .locked-badge{font-size:9px;font-weight:800;padding:1px 5px;border-radius:3px;background:#1A1A1A;color:var(--muted);}
+  .ex-sets{font-size:11px;color:var(--muted);}
+  .ex-sets b{color:var(--accent);}
+  .ex-actions{display:flex;gap:6px;align-items:center;}
+  .expand-btn{background:none;border:none;color:var(--muted);font-size:18px;padding:0;line-height:1;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+  .search-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:10px;font-weight:700;padding:4px 7px;letter-spacing:0.5px;}
+  .search-btn:hover{color:var(--text);border-color:var(--dim);}
+
+  /* EXPAND PANEL */
+  .ex-expand{display:none;padding:0 12px 12px;border-top:1px solid var(--border);}
+  .ex-expand.open{display:block;}
+  .steps-title{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:10px 0 6px;}
+  .step{display:flex;gap:8px;margin-bottom:5px;font-size:12px;color:#8A9BB0;line-height:1.5;}
+  .step-num{width:16px;height:16px;border-radius:50%;background:var(--dim);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0;margin-top:1px;}
+  .tip-box{background:var(--surface);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:8px 10px;margin-top:8px;font-size:11px;color:#7A9BB0;line-height:1.5;}
+
+  /* IMAGE SEARCH */
+  .img-search-box{margin-top:10px;border:1px solid var(--border);border-radius:8px;overflow:hidden;display:none;}
+  .img-search-box.open{display:block;}
+  .img-search-top{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface);}
+  .img-search-top span{font-size:11px;color:var(--muted);}
+  .img-search-links{display:flex;gap:6px;}
+  .open-browser-btn{font-size:10px;font-weight:700;color:var(--accent);background:none;border:1px solid var(--accent);border-radius:5px;padding:3px 8px;text-decoration:none;}
+  .close-img-btn{background:none;border:none;color:var(--muted);font-size:16px;padding:0;width:20px;height:20px;}
+  .img-iframe-wrap{position:relative;height:260px;background:#0A0A0A;}
+  .img-iframe-wrap iframe{width:100%;height:100%;border:none;}
+  .iframe-fallback{display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:10px;font-size:13px;color:var(--muted);text-align:center;padding:20px;}
+  .iframe-fallback.show{display:flex;}
+  .iframe-fallback a{color:var(--accent);font-weight:700;font-size:13px;}
+
+  /* PERFORMANCE TAB */
+  .perf-section{padding:14px 16px;}
+  .perf-week-selector{margin-bottom:14px;}
+  .perf-week-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+  .week-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;}
+  .wk-btn{padding:7px 0;border:none;border-radius:7px;background:var(--card);color:var(--muted);font-size:11px;font-weight:700;transition:all 0.15s;}
+  .wk-btn.active{background:var(--accent);color:#000;}
+  .wk-btn.done-wk{background:#0A2A1A;color:var(--green);}
+  .targets-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+  .target-card{background:var(--card);border-radius:8px;padding:10px 12px;border:1px solid var(--border);}
+  .target-label{font-size:10px;color:var(--muted);margin-bottom:4px;}
+  .target-val{font-size:12px;font-weight:800;color:var(--text);line-height:1.3;}
+
+  /* RULES */
+  .rules-section{padding:14px 16px;}
+  .rule-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:9px;display:flex;gap:14px;}
+  .rule-icon{font-size:22px;flex-shrink:0;}
+  .rule-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+  .rule-desc{font-size:12px;color:var(--muted);line-height:1.55;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#00E87A;color:#000;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;transition:transform 0.3s;z-index:999;pointer-events:none;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+
+  .hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">Athletic <span>Blueprint</span></div>
+    <div class="week-pill">
+      <button class="week-btn" onclick="changeWeek(-1)">‹</button>
+      Week <b id="weekNum">1</b>
+      <button class="week-btn" onclick="changeWeek(1)">›</button>
+    </div>
+  </div>
+  <div class="phase-bar" id="phaseBar"></div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('schedule',this)">📅 Schedule</button>
+    <button class="tab" onclick="switchTab('rules',this)">📋 Rules</button>
+  </div>
+</div>
+
+<!-- SCHEDULE VIEW -->
+<div id="scheduleView">
+  <div class="schedule" id="scheduleList"></div>
+  <div class="day-detail hidden" id="dayDetail"></div>
+</div>
+
+<!-- RULES VIEW -->
+<div id="rulesView" class="hidden rules-section"></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let currentWeek = parseInt(localStorage.getItem('aw_week')||'1');
+let checked = JSON.parse(localStorage.getItem('aw_checked')||'{}');
+let expanded = {};
+let activeDay = null;
+let currentTab = 'schedule';
+
+function save(){
+  localStorage.setItem('aw_week', currentWeek);
+  localStorage.setItem('aw_checked', JSON.stringify(checked));
+}
+
+// ─── PHASE INFO ─────────────────────────────────────────────────────────────
+const PHASES = [
+  {num:1,weeks:"1–4",title:"Phase 1 — Foundation",color:"#00D4FF",
+   desc:"<b>Goal:</b> Learn movement patterns, build base endurance, start fat loss. Low impact — shoulder-safe. Focus on form over reps.",
+   plyo:"Plyometrics: <b>HOLD</b> — only light jumps. Master technique first."},
+  {num:2,weeks:"5–8",title:"Phase 2 — Build",color:"#00E87A",
+   desc:"<b>Goal:</b> Push volume up. 50→80 squats. Add first real plyometrics. Cardio base building fast.",
+   plyo:"Plyometrics: <b>Phase 2 unlocked</b> — pogos, squat jumps, lateral hops added."},
+  {num:3,weeks:"9–12",title:"Phase 3 — Explosive",color:"#FF6B2B",
+   desc:"<b>Goal:</b> 100→150 squats. Explosive power, agility drills, full plyometrics. Serious athleticism begins here.",
+   plyo:"Plyometrics: <b>Full program</b> — all explosive work active."},
+  {num:4,weeks:"13–16",title:"Phase 4 — Peak",color:"#A855F7",
+   desc:"<b>Goal:</b> 200 squats, peak explosiveness, max stamina. All exercises at full load. Maintain and push further.",
+   plyo:"Plyometrics: <b>Maximum intensity</b> — add weights to upper body moves if shoulder is healed."},
+];
+
+function getPhase(w){ return Math.min(4, Math.ceil(w/4)); }
+function getWeekInPhase(w){ return ((w-1)%4)+1; }
+
+// ─── EXERCISE DATA ───────────────────────────────────────────────────────────
+// Sets/reps scale by week. Format: [phase1val, phase2val, phase3val, phase4val]
+// or a function(week) => string
+
+function repsScale(base, inc, w){
+  const p = getPhase(w);
+  return base + (p-1)*inc;
+}
+
+const DAYS = [
+  {
+    id:1, emoji:"🦵", name:"Lower Body Endurance", duration:"45–60 min",
+    color:"#00D4FF", colorBg:"#001A2A",
+    note:"Foundation of everything athletic. Every rep of every squat is a deposit toward your 200 goal.",
+    tags:["SQUATS","LUNGES","PLYOS","CALISTHENICS"],
+    sections:[
+      {title:"Warm-Up", icon:"🔥", color:"#FF6B2B", exercises:[
+        {name:"Jumping Jacks",base:true,sets:w=>"2 sets",reps:w=>`${repsScale(20,10,w)} reps`,steps:["Arms and legs move in sync","Keep a light bounce, don't slam feet","Breathe rhythmically"],tip:"Gets blood flowing to everything. Never skip warm-up."},
+        {name:"Hip Circles",base:true,sets:w=>"2 sets",reps:w=>"10 each side",steps:["Hands on hips, feet shoulder-width","Make the biggest circles you can","Slow and controlled — feel the hip joint open"],tip:"Lubricates hip joint before loading it."},
+        {name:"Leg Swings (Forward)",base:true,sets:w=>"2 sets",reps:w=>"15 each leg",steps:["Hold wall for balance","Swing leg forward and back freely","Let momentum do the work — don't force range"],tip:"Dynamic hamstring and hip flexor warm-up."},
+        {name:"Leg Swings (Side)",base:true,sets:w=>"2 sets",reps:w=>"15 each leg",steps:["Hold wall, swing leg across body and out","Stay relaxed — let the leg swing freely","Gradually increase range as muscles warm up"],tip:"Opens inner thigh and hip abductor."},
+      ]},
+      {title:"Squat Progression", icon:"🏋️", color:"#00D4FF", exercises:[
+        {name:"Wall Sit",base:true,sets:w=>`${getPhase(w)>=2?3:2} sets`,reps:w=>`${repsScale(20,15,w)} sec`,steps:["Back flat against wall","Thighs parallel to floor","Arms relaxed — don't push on knees","Breathe steadily — don't hold breath"],tip:"Builds quad endurance directly. Time under tension without impact."},
+        {name:"Bodyweight Squat",base:true,sets:w=>`${getPhase(w)>=2?4:3} sets`,reps:w=>`${repsScale(15,15,w)} reps`,steps:["Feet shoulder-width, toes slightly out","Break at hips first, then knees","Knees track over 2nd toe — never cave in","Go below parallel if mobility allows","Drive through full foot to stand"],tip:"Your path to 200. Track weekly PR — how many can you do unbroken?"},
+        {name:"Sumo Squat",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(12,8,w)} reps`,steps:["Wide stance, toes pointed 45° out","Drop straight down between legs","Knees push out hard the whole time","Great for inner thighs and glutes"],tip:"Works adductors and glutes more than regular squat."},
+        {name:"Squat Hold (Bottom)",base:true,sets:w=>"2 sets",reps:w=>`${repsScale(20,20,w)} sec`,steps:["Lower to deepest squat position","Heels flat or use support — work toward flat","Relax hips into the bottom","Hold — use doorframe for support if needed"],tip:"Builds mobility and tendon strength simultaneously. Key for deep squat."},
+        {name:"Cossack Squat",base:false,unlockWeek:3,sets:w=>"3 sets",reps:w=>`${repsScale(8,4,w)} each side`,steps:["Feet very wide — wider than sumo","Shift weight to one leg, bend that knee","Other leg straight, foot flexed — heel stays down","Come back up and shift to other side"],tip:"Unilateral strength + inner thigh stretch. Brutal and effective."},
+        {name:"Bulgarian Split Squat",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>`${repsScale(8,3,w)} each leg`,steps:["Rear foot elevated on sofa or chair","Front foot far enough forward — knee stays behind toes","Lower slowly — back knee toward floor","Drive through front heel to rise"],tip:"Best single-leg strength builder. Fixes imbalances fast."},
+        {name:"Jump Squat",base:false,unlockWeek:5,sets:w=>`${getPhase(w)>=3?4:3} sets`,reps:w=>`${repsScale(6,4,w)} reps`,steps:["Regular squat descent — controlled","Explode up from bottom — full extension","Soft landing — absorb with bent knees","Reset and repeat"],tip:"Converts strength to explosive power. Core plyometric."},
+        {name:"Pistol Squat (assisted)",base:false,unlockWeek:9,sets:w=>"3 sets",reps:w=>`${repsScale(5,2,w)} each leg`,steps:["Hold door frame for support","Extend one leg forward","Lower on single leg as far as possible","Push up through heel"],tip:"Elite single-leg strength. Work toward unassisted over months."},
+      ]},
+      {title:"Lunge Variations", icon:"🦵", color:"#A855F7", exercises:[
+        {name:"Forward Lunge",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(10,5,w)} each leg`,steps:["Step forward — big stride","Lower back knee toward floor","Front knee tracks over foot","Push back to start through front heel"],tip:"Builds leg strength unilaterally. Foundation movement."},
+        {name:"Reverse Lunge",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(10,5,w)} each leg`,steps:["Step BACK instead of forward","Easier on knees than forward lunge","Great for beginners and those with knee sensitivity","Control the descent"],tip:"Safer for knees. Works same muscles with less knee shear."},
+        {name:"Lateral Lunge",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(8,4,w)} each side`,steps:["Step wide to one side","Bend that knee — push hips back","Keep other leg straight","Return to center"],tip:"Inner thigh and glute medius. Frontal plane strength often neglected."},
+        {name:"Walking Lunge",base:false,unlockWeek:3,sets:w=>"3 sets",reps:w=>`${repsScale(10,5,w)} total`,steps:["Lunge forward","Instead of returning — bring back foot forward into next lunge","Continue walking forward","Turn and come back"],tip:"Adds coordination and continuous tension. Great conditioning."},
+        {name:"Jumping Lunge",base:false,unlockWeek:7,sets:w=>"3 sets",reps:w=>`${repsScale(6,3,w)} each side`,steps:["Start in lunge position","Jump and switch legs in air","Land softly in opposite lunge","Keep torso upright throughout"],tip:"Explosive power + cardio combined."},
+      ]},
+      {title:"Plyometrics", icon:"⚡", color:"#FFD60A", exercises:[
+        {name:"Pogo Jumps",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>`${repsScale(15,10,w)} reps`,steps:["Feet together, minimal knee bend","Bounce off balls of feet rapidly","Think: stiff legs, spring from ankles","Land quietly — absorb and immediately rebound"],tip:"Trains calf-Achilles spring mechanism. Starts all plyometric training."},
+        {name:"Lateral Hops",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>`${repsScale(10,5,w)} each side`,steps:["Jump laterally over imaginary line","Land on one foot if possible — soft","Immediately push back the other way","Increase speed as you improve"],tip:"Lateral explosiveness. Crucial for sport performance and agility."},
+        {name:"Broad Jump",base:false,unlockWeek:7,sets:w=>"3 sets",reps:w=>`${repsScale(5,3,w)} reps`,steps:["Squat down with arm swing back","Explode forward — maximum distance","Land softly with bent knees","Measure and try to beat previous mark"],tip:"Pure horizontal power. Track distance as progress metric."},
+        {name:"Box Jump (use stairs)",base:false,unlockWeek:9,sets:w=>"4 sets",reps:w=>`${repsScale(5,2,w)} reps`,steps:["Stand facing bottom stair","Squat and swing arms","Jump onto step — land softly with bent knees","Step down — don't jump down"],tip:"Vertical power. Use 1-2 stairs at first, increase height."},
+        {name:"Burpees",base:false,unlockWeek:3,sets:w=>`${getPhase(w)>=3?4:3} sets`,reps:w=>`${repsScale(5,3,w)} reps`,steps:["Stand, drop hands to floor","Jump feet back to plank","Do a push-up (or skip push-up phase 1)","Jump feet forward, jump up with arms overhead"],tip:"Full body conditioning. Most efficient bodyweight cardio move."},
+      ]},
+    ]
+  },
+  {
+    id:2, emoji:"💪", name:"Upper Body & Push Strength", duration:"40–55 min",
+    color:"#FF6B2B", colorBg:"#2A1200",
+    note:"Calisthenics upper body. Start light — shoulder injury means ZERO pain tolerance. Stop immediately if it hurts.",
+    tags:["PUSH-UPS","SHOULDERS","TRICEPS","CHEST"],
+    sections:[
+      {title:"Warm-Up", icon:"🔥", color:"#FF6B2B", exercises:[
+        {name:"Arm Circles",base:true,sets:w=>"2 sets",reps:w=>"20 each direction",steps:["Small circles → medium → large","Forward then backward","Keep shoulders relaxed — not hunched"],tip:"Mobilizes shoulder joint before any loading."},
+        {name:"Shoulder Rolls",base:true,sets:w=>"2 sets",reps:w=>"15 each direction",steps:["Lift shoulders toward ears","Roll back and down — full circle","Slow and deliberate","Feel the shoulder blade movement"],tip:"Warms up rotator cuff and shoulder girdle."},
+        {name:"Cat-Cow",base:true,sets:w=>"2 sets",reps:w=>"10 slow reps",steps:["On all fours — wrists under shoulders","Inhale: drop belly, lift head and tailbone (Cow)","Exhale: round spine up, tuck chin and pelvis (Cat)","Move slowly — breathe into each position"],tip:"Mobilizes entire spine — prep for all pushing movements."},
+      ]},
+      {title:"Push-Up Progressions", icon:"🤸", color:"#FF6B2B", exercises:[
+        {name:"Wall Push-Up",base:true,sets:w=>`${getPhase(w)===1?3:2} sets`,reps:w=>`${repsScale(15,5,w)} reps`,steps:["Stand arm's length from wall","Hands shoulder-width on wall","Bend elbows — nose toward wall","Push back. Keep body straight"],tip:"Start here if you can't do floor push-ups yet. Zero shoulder strain."},
+        {name:"Incline Push-Up",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(10,5,w)} reps`,steps:["Hands on sofa/chair edge","Body in straight line","Lower chest toward surface","Push up — elbows at ~45° from body"],tip:"Easier than floor push-ups. Build up here first."},
+        {name:"Knee Push-Up",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(10,8,w)} reps`,steps:["On knees — body straight from knee to head","Hands shoulder-width","Lower chest — controlled descent","Push up — no sagging hips"],tip:"Proper push-up with reduced load. Better than bad full push-up."},
+        {name:"Standard Push-Up",base:false,unlockWeek:3,sets:w=>`${getPhase(w)>=2?4:3} sets`,reps:w=>`${repsScale(8,5,w)} reps`,steps:["Hands shoulder-width, slightly forward","Body straight — head to heels","Lower until chest nearly touches floor","Push up explosively — control the descent"],tip:"Foundation of all upper body calisthenics. Track max reps weekly."},
+        {name:"Wide Push-Up",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>`${repsScale(8,4,w)} reps`,steps:["Hands wider than shoulder-width","Elbows flare more — targets chest more","Lower chest between hands","Full range of motion"],tip:"More chest focus, less triceps."},
+        {name:"Diamond Push-Up",base:false,unlockWeek:7,sets:w=>"3 sets",reps:w=>`${repsScale(6,3,w)} reps`,steps:["Hands together under chest — diamond shape","Elbows stay close to body","Triceps and inner chest primary movers","Slow descent — explosive push"],tip:"Hardest push-up variation. Best triceps builder without equipment."},
+        {name:"Archer Push-Up",base:false,unlockWeek:9,sets:w=>"3 sets",reps:w=>`${repsScale(5,2,w)} each side`,steps:["Wide hand placement","As you lower — shift weight to one arm","Other arm stays extended — acts as guide","Alternate sides each rep"],tip:"Unilateral progression toward one-arm push-up."},
+        {name:"Decline Push-Up",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>`${repsScale(8,4,w)} reps`,steps:["Feet elevated on sofa/chair","Body angled — targets upper chest and shoulders","Same push-up form","Height of feet changes difficulty"],tip:"Upper chest and shoulder emphasis."},
+      ]},
+      {title:"Shoulder & Scapula", icon:"🔷", color:"#A855F7", exercises:[
+        {name:"Scapular Push-Up",base:true,sets:w=>"3 sets",reps:w=>"15 reps",steps:["In push-up position — arms straight","Without bending elbows — let chest sink between shoulders","Then push shoulder blades apart — chest rises","Only the shoulder blades move"],tip:"Serratus anterior strength — critical for shoulder health and injury prevention."},
+        {name:"Band Pull-Apart",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(15,5,w)} reps`,steps:["Hold resistance band at chest height","Hands shoulder-width — overhand grip","Pull band apart — arms go to sides","Squeeze shoulder blades together at end"],tip:"Counteracts all pushing work. Rear delts and rotator cuff. Essential for shoulder injury recovery."},
+        {name:"Y-T-W with Band",base:false,unlockWeek:3,sets:w=>"3 sets",reps:w=>"8 each position",steps:["Bend forward slightly or lie face down","Form Y: arms 45° above horizontal — squeeze up","Form T: arms straight out to sides","Form W: elbows bent 90° — pull back"],tip:"Comprehensive rotator cuff rehab and strengthening."},
+        {name:"Pike Push-Up",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>`${repsScale(6,3,w)} reps`,steps:["Start in downward dog — hips high","Lower head toward floor between hands","Push back up","Vertical pressing motion — shoulders primary"],tip:"Shoulder-dominant push. Progression toward handstand push-up."},
+      ]},
+      {title:"Sit-Ups & Core Push", icon:"🔥", color:"#00E87A", exercises:[
+        {name:"Sit-Up",base:true,sets:w=>`${getPhase(w)>=2?4:3} sets`,reps:w=>`${repsScale(15,10,w)} reps`,steps:["Knees bent, feet flat or anchored","Hands on chest or behind head (no pulling)","Curl up until elbows touch knees","Lower slowly — don't crash down"],tip:"Classic. Build to 50+ reps unbroken."},
+        {name:"Crunch",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(20,10,w)} reps`,steps:["Knees bent — lower back stays on floor","Lift shoulder blades only — small movement","Exhale as you crunch up","Lower with control — don't rest at bottom"],tip:"Upper ab isolation. Complement with reverse crunch for lower abs."},
+        {name:"Bicycle Crunch",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(20,10,w)} total`,steps:["Hands behind head — elbows wide","Bring opposite elbow to knee","Extend other leg straight","Slow and controlled — feel the rotation"],tip:"Best overall ab exercise for obliques + rectus abdominis combined."},
+        {name:"Reverse Crunch",base:false,unlockWeek:2,sets:w=>"3 sets",reps:w=>`${repsScale(12,6,w)} reps`,steps:["Lie on back — arms flat at sides","Legs up at 90°","Use lower abs to lift hips off floor","Lower slowly — don't swing"],tip:"Lower ab focus. Much harder than it looks."},
+        {name:"V-Up",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>`${repsScale(8,4,w)} reps`,steps:["Lie flat — arms overhead, legs straight","Simultaneously raise arms and legs","Touch hands to feet at the top","Lower with control — don't slam"],tip:"Full core contraction. Advanced."},
+      ]},
+    ]
+  },
+  {
+    id:3, emoji:"🧘", name:"Mobility & Deep Flexibility", duration:"45–50 min",
+    color:"#A855F7", colorBg:"#1A0A2A",
+    note:"The most underrated day. This day prevents every injury and is what separates athletic people from broken ones.",
+    tags:["HIPS","SPINE","HAMSTRINGS","SPLITS PREP"],
+    sections:[
+      {title:"Joint Mobility (CARs)", icon:"⚙️", color:"#A855F7", exercises:[
+        {name:"Neck CARs",base:true,sets:w=>"2 sets",reps:w=>"5 each direction",steps:["Slow neck circles — full range","Forward, side, back — controlled","Nothing should crack painfully","Bigger range each rotation"],tip:"Controlled Articular Rotations. Takes joints through full range actively."},
+        {name:"Shoulder CARs",base:true,sets:w=>"2 sets",reps:w=>"5 each arm",steps:["One arm — make the biggest possible circle","Forward overhead and back — full range","No compensating with torso","Other arm hangs relaxed"],tip:"Shoulder health. Go slowly — this exposes your actual range."},
+        {name:"Hip CARs",base:true,sets:w=>"2 sets",reps:w=>"5 each side",steps:["Stand on one leg — hold wall","Draw the biggest possible circle with raised knee","Forward, side, back, internal rotation","Slow and controlled — no momentum"],tip:"Single most important hip health exercise. Do daily if possible."},
+        {name:"Thoracic Spine Rotation",base:true,sets:w=>"2 sets",reps:w=>"10 each side",steps:["Sit cross-legged or kneel","Arms crossed on chest","Rotate upper back only — hips stay forward","Hold 2 seconds at end range"],tip:"Thoracic mobility reduces lower back and shoulder pain."},
+      ]},
+      {title:"Hip Opening", icon:"🦋", color:"#FF3B5C", exercises:[
+        {name:"Malasana (Deep Squat)",base:true,sets:w=>"1 set",reps:w=>`${repsScale(30,30,w)} sec`,steps:["Feet slightly wider than shoulders, toes out","Lower into deepest squat — heels flat ideally","Elbows push knees out from inside","Hold — breathe into lower back"],tip:"Single most important hip mobility exercise. Builds toward flat-heel squat."},
+        {name:"Frog Stretch",base:true,sets:w=>"1 set",reps:w=>`${repsScale(45,30,w)} sec`,steps:["On all fours — walk knees wide","Feet turn out to match knees","Sink hips back and down","Breathe deeply into the groin — relax on exhale"],tip:"Deep inner groin and hip opener. Passive stretch — let gravity do the work."},
+        {name:"Pigeon Pose",base:true,sets:w=>"1 set",reps:w=>`${repsScale(45,30,w)} sec each`,steps:["From all fours — bring one knee forward","Shin is diagonal or parallel to hips","Extend back leg straight","Fold forward over front shin — relax completely"],tip:"Deep hip external rotator stretch. Addresses piriformis which affects everything."},
+        {name:"90/90 Stretch",base:true,sets:w=>"2 sets",reps:w=>`${repsScale(30,15,w)} sec each side`,steps:["Sit with both legs at 90° — one forward, one to side","Front leg: external rotation","Back leg: internal rotation","Keep both sit bones on floor — lean over front leg"],tip:"Works both internal and external hip rotation simultaneously."},
+        {name:"Cossack Squat Stretch",base:false,unlockWeek:2,sets:w=>"2 sets",reps:w=>"8 slow each side",steps:["Wide stance","Shift to one side slowly","Stay low — feel inner thigh stretch on straight leg","Come up and shift other way"],tip:"Dynamic hip and inner thigh opening."},
+        {name:"Lizard Pose",base:false,unlockWeek:3,sets:w=>"1 set",reps:w=>`${repsScale(45,20,w)} sec each`,steps:["Low lunge — front foot outside front hand","Walk foot further out if possible","Drop to forearms for deeper stretch","Breathe — sink hips toward floor"],tip:"Deep hip flexor and inner groin combined. One of the best."},
+      ]},
+      {title:"Hamstring & Posterior Chain", icon:"🔧", color:"#00D4FF", exercises:[
+        {name:"Standing Forward Fold",base:true,sets:w=>"2 sets",reps:w=>`${repsScale(30,20,w)} sec`,steps:["Stand, fold forward — let arms hang","Slight knee bend OK at first","Relax neck — nod head yes and no","Each exhale sink a little lower"],tip:"Passive hamstring lengthening. Never bounce — hold and breathe."},
+        {name:"Seated Forward Fold",base:true,sets:w=>"2 sets",reps:w=>`${repsScale(45,20,w)} sec`,steps:["Sit with legs extended","Hinge from hips — not by rounding lower back","Reach forward — hold feet or shins","Breathe and release — don't pull hard"],tip:"Full posterior chain stretch — hamstrings, calves, lower back."},
+        {name:"World's Greatest Stretch",base:true,sets:w=>"2 sets",reps:w=>"5 each side",steps:["Start in lunge position","Place same-side hand inside front foot","Rotate that arm up toward ceiling — open chest","Hold, then sweep arm down and forward"],tip:"Hits hip flexor, thoracic spine, and hamstring in one move. Best single warm-up exercise."},
+        {name:"Hamstring Curls (floor)",base:false,unlockWeek:2,sets:w=>"3 sets",reps:w=>`${repsScale(10,5,w)} reps`,steps:["Lie face down — hands under forehead","Curl one heel toward glute slowly","Hold 2 sec — really squeeze hamstring","Lower slowly — 3 count"],tip:"Strengthens hamstring at shortened position — injury prevention."},
+        {name:"Nordic Hamstring Curl",base:false,unlockWeek:9,sets:w=>"3 sets",reps:w=>`${repsScale(3,2,w)} reps`,steps:["Kneel with feet anchored under sofa or have someone hold","Lower torso forward slowly — fight gravity","Catch yourself with hands at bottom","Push back up with hands to start"],tip:"Most effective hamstring exercise known. Very hard — start with 3 reps."},
+      ]},
+      {title:"Spinal Mobility", icon:"🌀", color:"#00E87A", exercises:[
+        {name:"Thoracic Extension",base:true,sets:w=>"2 sets",reps:w=>"10 reps",steps:["Sit in chair or on floor","Clasp hands behind head","Extend upper back over back of chair or interlaced hands","Gentle extension — not force"],tip:"Counteracts all the forward rounding from daily life."},
+        {name:"Thread the Needle",base:true,sets:w=>"2 sets",reps:w=>"8 each side",steps:["On all fours","Thread one arm under body — shoulder to floor","Hold and breathe","Come back and do other side"],tip:"Thoracic rotation stretch. Gets into upper back spaces."},
+        {name:"Spinal Twist (lying)",base:true,sets:w=>"2 sets",reps:w=>`${repsScale(30,15,w)} sec each`,steps:["Lie on back — pull one knee to chest","Cross that knee over body to floor","Opposite arm out — look away from knee","Both shoulders on floor ideally"],tip:"Lower back and thoracic rotation decompression."},
+      ]},
+    ]
+  },
+  {
+    id:4, emoji:"🔥", name:"Glute, Core & Performance", duration:"50–65 min",
+    color:"#00E87A", colorBg:"#001A0E",
+    note:"The performance day. Everything here builds athletic power AND directly improves sexual stamina and endurance.",
+    tags:["GLUTES","KEGEL","CORE","STAMINA"],
+    sections:[
+      {title:"Activation", icon:"⚡", color:"#FFD60A", exercises:[
+        {name:"Glute Bridges",base:true,sets:w=>`${getPhase(w)>=2?4:3} sets`,reps:w=>`${repsScale(15,10,w)} reps`,steps:["Lie on back — knees bent, feet flat","Drive hips up by squeezing glutes hard","Hold at top 2 seconds","Lower slowly — don't crash"],tip:"Fundamental glute activator. Feel both glutes equally — address imbalance."},
+        {name:"Donkey Kicks",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(15,5,w)} each side`,steps:["On all fours — hands under shoulders","Keep knee at 90° — drive foot to ceiling","Squeeze glute at top — hold 1 second","Lower slowly — hip stays level"],tip:"Isolates glute max in its strongest range."},
+        {name:"Fire Hydrants",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(15,5,w)} each side`,steps:["Same all-fours position","Lift knee OUT to the side — like a dog at a hydrant","Go as high as possible — don't rotate torso","Lower slowly"],tip:"Glute medius — stabilizes the hip during all movement."},
+      ]},
+      {title:"Hip Thrust Power", icon:"💥", color:"#FF3B5C", exercises:[
+        {name:"Hip Thrust (floor)",base:true,sets:w=>"—",reps:w=>getHipThrust(currentWeek),steps:["Upper back on sofa/bed edge","Feet flat — hip-width","Drive hips up — body flat at top","Squeeze glutes hard at top — hold 2 seconds","Build from 15 reps toward 50+ per set"],tip:"Most directly relevant strength for sexual performance. Build endurance here."},
+        {name:"Single Leg Hip Thrust",base:false,unlockWeek:3,sets:w=>"3 sets",reps:w=>`${repsScale(12,5,w)} each leg`,steps:["Same hip thrust setup","Extend one leg straight","Drive up with single leg only","Keep hips level — don't tilt"],tip:"Fixes strength imbalances. Also harder — higher intensity per rep."},
+        {name:"Frog Pumps",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(20,10,w)} reps`,steps:["Lie on back — soles of feet together","Knees dropped out — butterfly but lying","Drive hips straight up squeezing glutes","Small rapid pulses — stay near top"],tip:"Unusual but elite — foot position forces maximum glute activation."},
+        {name:"Hip Thrust with Band",base:false,unlockWeek:5,sets:w=>"4 sets",reps:w=>`${repsScale(15,5,w)} reps`,steps:["Band across hip crease — anchored under hands","Adds resistance at top of movement","Focus on the squeeze at the very top","Slow and controlled"],tip:"Resistance band increases difficulty without weights."},
+      ]},
+      {title:"Pelvic Floor & Kegel", icon:"🎯", color:"#A855F7", exercises:[
+        {name:"Basic Kegel",base:true,sets:w=>"—",reps:w=>getKegel(currentWeek),steps:["Contract the muscles you'd use to stop urination mid-flow","Hold contracted — don't squeeze buttocks or abs","Release fully — this is equally important","Breathe normally throughout — never hold breath"],tip:"Foundation of pelvic floor training. Improves both performance roles and prevents pelvic floor dysfunction."},
+        {name:"Reverse Kegel",base:false,unlockWeek:2,sets:w=>"3 sets",reps:w=>"10 reps — 5 sec hold",steps:["Instead of contracting — gently BEAR DOWN as if starting to urinate","Gentle push — not straining","Hold, release, repeat","Balance with regular kegels — both matter"],tip:"For bottom performance specifically. Relaxation and lengthening of pelvic floor. Critical for comfort."},
+        {name:"Kegel + Glute Bridge Combo",base:false,unlockWeek:3,sets:w=>"3 sets",reps:w=>`${repsScale(12,4,w)} reps`,steps:["Set up for glute bridge","As you drive hips up — simultaneously contract kegel","Hold both at top for 3 seconds","Release both as you lower"],tip:"Trains pelvic floor and glutes as a system — more effective than either alone."},
+        {name:"Mula Bandha (Root Lock)",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>"5 holds — 15 sec each",steps:["Sit cross-legged — spine tall","Contract entire pelvic floor — perineum, anus, deep abs together","Imagine lifting everything up toward navel","Hold — breathe normally — never hold breath"],tip:"Yoga's advanced pelvic floor. Deeper than regular kegel."},
+      ]},
+      {title:"Plank & Core Endurance", icon:"🏔️", color:"#5B8FD4", exercises:[
+        {name:"Plank Hold",base:true,sets:w=>"—",reps:w=>getPlank(currentWeek),steps:["Forearms on floor — elbows under shoulders","Body straight — no sagging hips, no raised butt","Squeeze everything: glutes, core, quads","Breathe normally — never hold breath"],tip:"Build from 20 seconds toward 2+ minutes. Tracks overall core strength perfectly."},
+        {name:"Side Plank",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(15,10,w)} sec each side`,steps:["On forearm — elbow under shoulder","Body straight — hips up, not sagging","Top arm on hip or extended","Stack feet or stagger for easier version"],tip:"Lateral core stability — protects spine under load."},
+        {name:"Dead Bug",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(8,4,w)} each side`,steps:["Lie on back — arms up, knees at 90°","PRESS lower back flat into floor — keep it there","Slowly extend opposite arm/leg — maintaining pressure","Return, switch sides"],tip:"Best lower back safe core exercise. The lower back pressing down is everything."},
+        {name:"Hollow Body Hold",base:false,unlockWeek:3,sets:w=>"3 sets",reps:w=>`${repsScale(15,10,w)} sec`,steps:["Lie on back — arms overhead","Press lower back FLAT into floor — never loses contact","Raise arms and legs slightly","You should look slightly banana-shaped"],tip:"Gymnastic core foundation. Whole-body tension."},
+        {name:"Dragon Flag (negative)",base:false,unlockWeek:11,sets:w=>"3 sets",reps:w=>`${repsScale(3,1,w)} reps`,steps:["Lie on bench or floor — hold support behind head","Lift legs and entire body up","SLOWLY lower your body — fight gravity","Touch down and reset"],tip:"Elite core exercise. Bruce Lee's signature move. Work up to it."},
+      ]},
+      {title:"Breathing & Control", icon:"🫁", color:"#4CAF82", exercises:[
+        {name:"Box Breathing",base:true,sets:w=>"1 set",reps:w=>"5 min",steps:["Inhale for 4 counts","Hold for 4 counts","Exhale for 4 counts","Hold empty for 4 counts — that's 1 cycle"],tip:"Trains nervous system composure under effort. Directly extends endurance."},
+        {name:"Rhythmic Breath Matching",base:false,unlockWeek:2,sets:w=>"3 sets",reps:w=>"2 min each",steps:["Begin hip thrusts at slow steady pace","Match each thrust to a breath — exhale on effort","When comfortable: double pace, maintain breath","This trains calm under sustained effort"],tip:"The reason people lose stamina is losing breath control."},
+        {name:"Hypopressive Breathing",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>"5 cycles",steps:["Stand or sit tall","Exhale ALL air out completely","Without inhaling: expand ribcage outward","Hold vacuum 10-15 seconds, then release"],tip:"Passive pelvic floor training. Used in European sports medicine."},
+      ]},
+    ]
+  },
+  {
+    id:5, emoji:"⚡", name:"Cardio & Agility", duration:"40–50 min",
+    color:"#FFD60A", colorBg:"#1A1500",
+    note:"Stamina is built here. This day directly determines how long you last at everything — trekking, running, sports, and in bed.",
+    tags:["CARDIO","AGILITY","HIIT","REFLEXES"],
+    sections:[
+      {title:"Base Cardio Circuit", icon:"🏃", color:"#FFD60A", exercises:[
+        {name:"High Knees",base:true,sets:w=>` ${getPhase(w)>=2?4:3} sets`,reps:w=>`${repsScale(30,15,w)} sec`,steps:["Run in place — drive knees up to hip height","Pump arms — opposite arm to leg","Stay on balls of feet — light and quick","Breathe continuously — never hold breath"],tip:"Heart rate up fast. Core stability while legs move. Fundamental cardio."},
+        {name:"Mountain Climbers",base:true,sets:w=>`${getPhase(w)>=2?4:3} sets`,reps:w=>`${repsScale(30,15,w)} sec`,steps:["High plank position — wrists under shoulders","Drive knee to chest — alternate rapidly","Hips stay level — don't bob up and down","Faster = more cardio, slower = more core"],tip:"Cardio + core combined. Excellent conditioning."},
+        {name:"Jump Rope (shadow)",base:true,sets:w=>` ${getPhase(w)>=2?4:3} sets`,reps:w=>`${repsScale(45,30,w)} sec`,steps:["Mimic jump rope movement without rope","Stay on balls of feet — minimal ankle/knee bend","Wrist rotation mimicking rope","Build to continuous 5+ minutes"],tip:"Best cardio in small space. Can buy actual rope for $3."},
+        {name:"Butt Kicks",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(30,15,w)} sec`,steps:["Run in place — kick heels toward glutes","Arms pump naturally","Quick light steps","Combines cardio with quad flexibility"],tip:"Dynamic quad stretch + cardio."},
+      ]},
+      {title:"HIIT Circuits", icon:"💥", color:"#FF3B5C", exercises:[
+        {name:"Tabata Squats",base:false,unlockWeek:3,sets:w=>"8 rounds",reps:w=>"20 sec on / 10 sec off",steps:["20 seconds max effort bodyweight squats","10 seconds rest — just breathe","8 rounds total = 4 minutes","Track how many reps in first vs last round"],tip:"Classic HIIT protocol. Massive metabolic demand."},
+        {name:"Burpee EMOM",base:false,unlockWeek:5,sets:w=>"10 rounds",reps:w=>`${repsScale(5,2,w)} reps per minute`,steps:["Every minute on the minute: do set number of burpees","Rest for remainder of the minute","If you finish in 20 sec you get 40 sec rest","As you get fitter — add reps"],tip:"EMOM format — trains power AND recovery rate simultaneously."},
+        {name:"30-20-10 Intervals",base:false,unlockWeek:7,sets:w=>"3 sets",reps:w=>"30s moderate / 20s fast / 10s sprint",steps:["Choose any exercise: high knees, squat jumps, etc.","30 seconds moderate effort","20 seconds fast","10 seconds ALL OUT — maximum effort","Walk 1 minute rest between sets"],tip:"VO2max training. This is where cardiovascular fitness skyrockets."},
+      ]},
+      {title:"Agility & Reflexes", icon:"🎯", color:"#00D4FF", exercises:[
+        {name:"Lateral Shuffles",base:false,unlockWeek:3,sets:w=>"4 sets",reps:w=>`${repsScale(15,5,w)} sec`,steps:["Low athletic stance — slight squat","Push off outer foot — shuffle laterally","Stay low — don't bob up and down","Touch floor at each end if space allows"],tip:"Lateral movement foundation. Most sports require this."},
+        {name:"Reaction Tap Drill",base:false,unlockWeek:3,sets:w=>"4 sets",reps:w=>"30 sec",steps:["Place 4 objects on floor in cross pattern","Touch each as fast as possible","Vary the order — randomize","React not plan — improves true reflex speed"],tip:"Actual reflex training. Trains the nervous system, not just muscles."},
+        {name:"Single Leg Balance",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(20,15,w)} sec each`,steps:["Stand on one leg","Eyes open first — then close for harder version","Try to be completely still","Add small reaches for advanced version"],tip:"Proprioception and balance. Injury prevention foundation."},
+        {name:"Direction Change Sprints",base:false,unlockWeek:5,sets:w=>"5 sets",reps:w=>"20 sec",steps:["In small space — 3-4 steps in one direction","Plant and cut hard — change direction","Maximum effort direction changes","Deceleration is the hardest part — train it"],tip:"Explosive direction change. Key for sport agility and reflex speed."},
+        {name:"T-Drill (modified)",base:false,unlockWeek:7,sets:w=>"5 reps",reps:w=>"max speed",steps:["Place 4 objects: 1 at top, 1 opposite, 2 to the sides","Sprint to center, shuffle left, shuffle right, back to start","Time yourself — try to beat your record","Rest 90 seconds between reps"],tip:"Classic agility drill. Measures and builds sport-specific movement quality."},
+      ]},
+      {title:"Stamina Finisher", icon:"🏆", color:"#00E87A", exercises:[
+        {name:"Continuous Squat Challenge",base:true,sets:w=>"1 set",reps:w=>` Target: ${repsScale(20,20,w)}+ unbroken`,steps:["Just. Keep. Squatting.","Focus on breathing — exhale up, inhale down","When it burns — breathe through it","Stop when form breaks — not when it hurts"],tip:"Track your max unbroken each week. This number tells you everything."},
+      ]},
+    ]
+  },
+  {
+    id:6, emoji:"🤸", name:"Full Body Calisthenics", duration:"55–70 min",
+    color:"#FF3B5C", colorBg:"#2A0010",
+    note:"The skill day. This builds toward the athletic body — where strength, control and movement quality combine.",
+    tags:["PULL-UPS","DIPS","BALANCE","SKILL"],
+    sections:[
+      {title:"Pulling Movements", icon:"⬆️", color:"#FF3B5C", exercises:[
+        {name:"Dead Hang",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(15,10,w)} sec`,steps:["Hang from door frame or bar if available","Let shoulders decompress — don't shrug up","Full passive hang — gravity stretches spine","Build grip strength and shoulder health simultaneously"],tip:"If no bar: hang from sturdy door frame edge. Decompresses spine."},
+        {name:"Inverted Row (table)",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(8,5,w)} reps`,steps:["Lie under sturdy table","Grip table edge — body straight","Pull chest to table — squeeze shoulder blades","Lower slowly — arms fully extend"],tip:"Horizontal pull. Works all back muscles. No pull-up bar needed."},
+        {name:"Door Frame Row",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(10,5,w)} reps`,steps:["Hold both sides of door frame","Feet forward — lean back","Pull yourself in","Control the return"],tip:"Substitute for rows until you get a bar."},
+        {name:"Assisted Pull-Up",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>`${repsScale(3,2,w)} reps`,steps:["Use resistance band around bar for assistance","Or use chair for partial assistance","Full range — start from dead hang","Pull until chin clears bar"],tip:"Work toward unassisted pull-up. Best upper body strength indicator."},
+        {name:"Negative Pull-Up",base:false,unlockWeek:7,sets:w=>"3 sets",reps:w=>`${repsScale(3,2,w)} reps`,steps:["Jump or step to top position — chin over bar","Lower yourself as SLOWLY as possible — 5-8 seconds","Touch bottom — reset","Don't kip or swing"],tip:"Fastest way to build pull-up strength. Negatives work better than assisted."},
+      ]},
+      {title:"Dips & Triceps", icon:"💪", color:"#FF6B2B", exercises:[
+        {name:"Chair Dip",base:true,sets:w=>`${getPhase(w)>=2?4:3} sets`,reps:w=>`${repsScale(8,5,w)} reps`,steps:["Hands on chair edge behind you — fingers forward","Legs extended or bent — bent is easier","Lower until elbows at 90°","Push up — full extension at top"],tip:"Best triceps exercise at home. Also hits chest and front shoulder."},
+        {name:"Tricep Push-Up",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(8,4,w)} reps`,steps:["Narrow hand position — hands under chest","Elbows stay CLOSE to body — track back","Lower until chest touches","Push up — elbows never flare"],tip:"Tricep focused. Harder than regular push-up."},
+        {name:"Parallel Bar Dip (chairs)",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>`${repsScale(6,3,w)} reps`,steps:["Two chairs side by side — hold backs","Legs between chairs","Lower until shoulders below elbow level","Push up to full extension"],tip:"Full dip. Works chest, triceps, shoulders simultaneously."},
+      ]},
+      {title:"Balance & Skill", icon:"🎭", color:"#A855F7", exercises:[
+        {name:"Handstand Wall Hold",base:false,unlockWeek:5,sets:w=>"3 sets",reps:w=>`${repsScale(10,10,w)} sec`,steps:["Kick up against wall — or walk feet up","Arms straight — elbows locked","Squeeze everything — straight body line","Build time gradually"],tip:"Full body tension and balance. Shoulder strength and confidence."},
+        {name:"Crow Pose",base:false,unlockWeek:7,sets:w=>"3 attempts",reps:w=>"hold as long as possible",steps:["Squat with hands on floor","Place knees on backs of upper arms","Lean forward — shift weight to hands","Lift feet — hold"],tip:"First arm balance. Teaches weight transfer and core compression."},
+        {name:"L-Sit (floor)",base:false,unlockWeek:9,sets:w=>"3 sets",reps:w=>`${repsScale(5,3,w)} sec`,steps:["Hands on floor beside hips","Push down — lift body off floor","Extend legs forward if possible — or tuck first","Hold — abs extremely engaged"],tip:"Advanced core + arm strength. Gymnastic foundation."},
+      ]},
+      {title:"Compound Finisher", icon:"🔥", color:"#FFD60A", exercises:[
+        {name:"Man Maker (no weight)",base:true,sets:w=>"3 sets",reps:w=>`${repsScale(5,3,w)} reps`,steps:["Start standing","Drop to push-up — do push-up","Mountain climbers x4","Jump feet forward","Jump up with arms overhead","That's 1 rep"],tip:"Full body conditioning complex. Brutal and effective."},
+      ]},
+    ]
+  },
+  {
+    id:7, emoji:"🌊", name:"Active Recovery & Breath", duration:"30–40 min",
+    color:"#4CAF82", colorBg:"#001510",
+    note:"Recovery is where the body ACTUALLY improves. This day is not optional. Light movement flushes soreness faster than rest.",
+    tags:["STRETCH","BREATHE","FOAM ROLL","RESTORE"],
+    sections:[
+      {title:"Light Movement", icon:"🚶", color:"#4CAF82", exercises:[
+        {name:"Indoor Walk",base:true,sets:w=>"1 set",reps:w=>"10 min",steps:["Walk around your home — slow steady pace","Swing arms freely","Focus on breathing deeply","Think about nothing"],tip:"Blood flow to repair muscles without taxing them."},
+        {name:"Slow Sun Salutation",base:true,sets:w=>"3 rounds",reps:w=>"very slow — 45 sec per pose",steps:["Mountain pose → forward fold → plank → cobra/updog → downdog → lunge → forward fold → mountain","Move through each pose slowly","Breathe into every position","This is not a workout — it's active movement"],tip:"Full body mobility in 5 minutes. Ideal morning routine."},
+      ]},
+      {title:"Full Body Stretch Sequence", icon:"🧘", color:"#A855F7", exercises:[
+        {name:"Figure-4 Hip Stretch",base:true,sets:w=>"2 sets",reps:w=>"60 sec each side",steps:["Lie on back — cross one ankle over opposite knee","Pull both legs toward chest","Feel deep in the crossed leg's glute/hip","Breathe and relax"],tip:"Piriformis and glute medius. Reduces lower back tightness dramatically."},
+        {name:"Happy Baby Pose",base:true,sets:w=>"1 set",reps:w=>"90 sec",steps:["Lie on back — bring knees to chest","Reach hands to outside of feet","Pull feet apart — knees toward armpits","Rock gently side to side"],tip:"Lower back decompression. Inner groin. Feel the floor massage your spine."},
+        {name:"Butterfly Stretch",base:true,sets:w=>"1 set",reps:w=>"90 sec",steps:["Sit — soles of feet together","Knees dropping out","Hold feet — lean forward from hips","Elbows gently push knees toward floor"],tip:"Inner thigh and groin. Hold and breathe — never bounce."},
+        {name:"Legs Up Wall",base:true,sets:w=>"1 set",reps:w=>"5 min",steps:["Lie on back — scoot close to wall","Extend legs straight up the wall","Arms out to sides — eyes closed","Breathe slowly — this is rest"],tip:"Passive recovery. Drains legs, calms nervous system. Do at night before sleep."},
+        {name:"Child's Pose",base:true,sets:w=>"2 sets",reps:w=>"60 sec",steps:["Kneel — sit back on heels","Arms extended forward — forehead to floor","Breathe into lower back — feel it expand","Let everything go"],tip:"Full spinal decompression and hip flexor rest."},
+      ]},
+      {title:"Breathing Practice", icon:"🌬️", color:"#00D4FF", exercises:[
+        {name:"4-7-8 Breathing",base:true,sets:w=>"1 set",reps:w=>"5 cycles",steps:["Inhale for 4 counts","Hold for 7 counts","Exhale completely for 8 counts — slow","This is one cycle"],tip:"Activates parasympathetic nervous system. Best for recovery and sleep quality."},
+        {name:"Belly Breathing",base:true,sets:w=>"1 set",reps:w=>"5 min",steps:["Hand on belly, hand on chest","Breathe only into belly — chest hand stays still","Big belly breath in — slow exhale","Restores diaphragmatic breathing many people lose"],tip:"Most people chest-breathe. Belly breathing is the foundation of all athletic breathing."},
+      ]},
+    ]
+  },
+];
+
+// ─── PROGRESSIVE TARGETS ────────────────────────────────────────────────────
+function getKegel(w){
+  const p=getPhase(w), wp=getWeekInPhase(w);
+  const base=[[10,12,15,20],[20,25,30,40],[40,50,60,80],[80,100,120,150]];
+  return `${base[p-1][wp-1]} reps — ${[5,6,8,10][p-1]+wp} sec hold`;
+}
+function getHipThrust(w){
+  const p=getPhase(w), wp=getWeekInPhase(w);
+  const base=[[15,20,25,30],[35,40,45,50],[50,55,60,70],[70,80,90,100]];
+  return `3 sets × ${base[p-1][wp-1]} reps`;
+}
+function getPlank(w){
+  const p=getPhase(w), wp=getWeekInPhase(w);
+  const base=[[20,25,30,40],[45,50,60,75],[80,90,105,120],[120,135,150,180]];
+  return `${base[p-1][wp-1]} sec`;
+}
+
+// ─── RULES ──────────────────────────────────────────────────────────────────
+const RULES=[
+  {icon:"🩺",title:"Shoulder Rule",desc:"ANY shoulder pain = stop that exercise immediately. Pain-free range only. The shoulder injury needs 3-6 months. Use band work and scapular exercises to heal it actively."},
+  {icon:"🦵",title:"Knee Rule",desc:"Knee tracks over 2nd toe. NEVER inward. If it caves: reduce reps until form holds, not just weight."},
+  {icon:"🫁",title:"Breathing",desc:"Exhale on effort (pushing/pulling phase). Inhale on recovery. Holding breath spikes blood pressure and kills endurance."},
+  {icon:"📈",title:"Progression Rule",desc:"Add reps or difficulty every 2 weeks. Not every session. Slow and sustainable beats fast and injured every time."},
+  {icon:"💧",title:"Hydration",desc:"3–3.5L daily at your weight. Non-negotiable. Dehydration kills performance more than anything else."},
+  {icon:"🍗",title:"Protein",desc:"110–150g protein daily. Without this your workouts break muscle down instead of building it. Eggs, dal, paneer, chicken — all count."},
+  {icon:"😴",title:"Sleep",desc:"7–8 hours. Growth hormone releases during deep sleep. Your body changes happen here, not during the workout."},
+  {icon:"⚖️",title:"Fat Loss",desc:"At 40% body fat, cardio + deficit matters as much as strength work. Aim for 500 kcal deficit. Fat loss will reveal the muscle you're building."},
+  {icon:"🎯",title:"The 200 Squat Timeline",desc:"Month 1: 30→50 squats. Month 2-3: 50→100. Month 4-5: 100→150. Month 6: 150→200. This is realistic. Don't rush phases."},
+  {icon:"🔥",title:"Performance Goal",desc:"The pelvic floor, hip thrust endurance, breathing control, and hip flexibility work on Day 4 directly builds what you want. These aren't 'extra' — they're central."},
+];
+
+// ─── RENDER PHASE BAR ────────────────────────────────────────────────────────
+function renderPhaseBar(){
+  const bar = document.getElementById('phaseBar');
+  const phase = getPhase(currentWeek);
+  bar.innerHTML = PHASES.map((p,i)=>`<div class="phase-chip ${i+1<phase?'done':i+1===phase?'active':''}" title="${p.title}"></div>`).join('');
+  document.getElementById('weekNum').textContent = currentWeek;
+}
+
+// ─── RENDER SCHEDULE ────────────────────────────────────────────────────────
+function renderSchedule(){
+  const container = document.getElementById('scheduleList');
+  const phase = PHASES[getPhase(currentWeek)-1];
+  container.innerHTML = `
+    <div class="phase-info">
+      <div class="phase-title" style="color:${phase.color}">${phase.title} · Weeks ${phase.weeks}</div>
+      <div class="phase-desc">${phase.desc}<br><span style="color:${phase.color};font-weight:700">${phase.plyo}</span></div>
+    </div>
+    ${DAYS.map(day=>{
+      const {done,total} = dayProgress(day.id);
+      return `<button class="day-card" onclick="openDay(${day.id})" style="border-left:4px solid ${day.color}">
+        <div class="day-icon" style="background:${day.colorBg}">${day.emoji}</div>
+        <div class="day-meta">
+          <div class="day-label" style="color:${day.color}">DAY ${day.id} · ${day.duration}</div>
+          <div class="day-name">${day.name}</div>
+          <div class="day-tags">${day.tags.map(t=>`<span class="tag" style="background:${day.color}18;color:${day.color}">${t}</span>`).join('')}</div>
+          <div class="progress-track"><div class="progress-fill" style="background:${day.color};width:${total>0?(done/total)*100:0}%"></div></div>
+        </div>
+        <div class="day-arrow">›</div>
+      </button>`;
+    }).join('')}
+  `;
+}
+
+// ─── DAY PROGRESS ────────────────────────────────────────────────────────────
+function dayProgress(dayId){
+  const day = DAYS.find(d=>d.id===dayId);
+  if(!day) return {done:0,total:0};
+  let total=0, done=0;
+  day.sections.forEach((sec,si)=>{
+    sec.exercises.forEach((ex,ei)=>{
+      const unlocked = ex.base || (ex.unlockWeek && currentWeek >= ex.unlockWeek);
+      if(unlocked){ total++; if(checked[`d${dayId}_s${si}_e${ei}`]) done++; }
+    });
+  });
+  return {done,total};
+}
+
+// ─── OPEN DAY ────────────────────────────────────────────────────────────────
+function openDay(dayId){
+  activeDay = dayId;
+  const day = DAYS.find(d=>d.id===dayId);
+  document.getElementById('scheduleList').classList.add('hidden');
+  const detail = document.getElementById('dayDetail');
+  detail.classList.remove('hidden');
+  renderDayDetail(day);
+  detail.scrollTop=0;
+  window.scrollTo(0,0);
+}
+
+function closeDay(){
+  activeDay = null;
+  document.getElementById('scheduleList').classList.remove('hidden');
+  document.getElementById('dayDetail').classList.add('hidden');
+  renderSchedule();
+}
+
+// ─── RENDER DAY DETAIL ───────────────────────────────────────────────────────
+function renderDayDetail(day){
+  const {done,total} = dayProgress(day.id);
+  const detail = document.getElementById('dayDetail');
+
+  let sectionsHTML = '';
+  day.sections.forEach((sec,si)=>{
+    let exHTML = '';
+    sec.exercises.forEach((ex,ei)=>{
+      const unlocked = ex.base || (ex.unlockWeek && currentWeek >= ex.unlockWeek);
+      const locked = !unlocked;
+      const isBonus = !ex.base;
+      const key = `d${day.id}_s${si}_e${ei}`;
+      const isDone = !!checked[key];
+      const sets = typeof ex.sets === 'function' ? ex.sets(currentWeek) : ex.sets;
+      const reps = typeof ex.reps === 'function' ? ex.reps(currentWeek) : ex.reps;
+
+      exHTML += `
+        <div class="ex-card ${isDone?'checked':''} ${isBonus?'bonus':''} ${isBonus&&unlocked?'unlocked':''}" id="card_${key}">
+          <div class="ex-top">
+            <button class="ex-check ${isDone?'done':''}" style="${isDone?`background:${day.color}`:'border-color:'+day.color+'44'}" onclick="${locked?'':'toggleCheck(\''+key+'\',\''+day.color+'\')'}" ${locked?'disabled':''}>
+              ${isDone?'✓':''}
+            </button>
+            <div class="ex-info">
+              <div class="ex-name">
+                ${ex.name}
+                ${isBonus && locked ? `<span class="locked-badge">🔒 Unlocks Wk ${ex.unlockWeek}</span>` : ''}
+                ${isBonus && unlocked ? `<span class="bonus-badge">⭐ BONUS</span>` : ''}
+              </div>
+              <div class="ex-sets"><b>${sets}</b> · ${reps}</div>
+            </div>
+            <div class="ex-actions">
+              ${!locked ? `<button class="search-btn" onclick="toggleImgSearch('imgbox_${key}','${encodeURIComponent(ex.name+' exercise how to')}')">🔍 IMG</button>` : ''}
+              <button class="expand-btn" onclick="toggleExpand('expand_${key}')">${expanded['expand_'+key]?'▴':'▾'}</button>
+            </div>
+          </div>
+          <div class="ex-expand ${expanded['expand_'+key]?'open':''}" id="expand_${key}">
+            <div class="steps-title">How to do it</div>
+            ${ex.steps.map((s,i)=>`<div class="step"><div class="step-num">${i+1}</div><div>${s}</div></div>`).join('')}
+            ${ex.tip ? `<div class="tip-box">💡 ${ex.tip}</div>` : ''}
+            <div class="img-search-box" id="imgbox_${key}"></div>
+          </div>
+        </div>`;
+    });
+
+    sectionsHTML += `
+      <div class="section-header" style="border-color:${sec.color}">
+        <span>${sec.icon} ${sec.title}</span>
+        <small style="color:${sec.color}">${sec.exercises.filter(e=>e.base||(e.unlockWeek&&currentWeek>=e.unlockWeek)).length} active</small>
+      </div>
+      ${exHTML}`;
+  });
+
+  detail.innerHTML = `
+    <div class="day-header">
+      <button class="back-btn" style="color:${day.color}" onclick="closeDay()">← Schedule</button>
+      <div class="day-header-info">
+        <div class="day-header-icon" style="background:${day.colorBg}">${day.emoji}</div>
+        <div class="day-header-text">
+          <span class="day-label" style="color:${day.color}">DAY ${day.id} · ${day.duration}</span>
+          <div class="day-name">${day.name}</div>
+        </div>
+      </div>
+      <div class="day-note" style="border-color:${day.color};background:${day.colorBg}">💬 ${day.note}</div>
+      <div class="day-progress-row">
+        <span>${done} of ${total} done</span>
+        ${done>0?`<button class="reset-btn" onclick="resetDay(${day.id})">Reset Day</button>`:''}
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="background:${day.color};width:${total>0?(done/total)*100:0}%"></div></div>
+    </div>
+    <div class="exercises-list">${sectionsHTML}</div>`;
+}
+
+// ─── TOGGLE ACTIONS ──────────────────────────────────────────────────────────
+function toggleCheck(key, color){
+  checked[key] = !checked[key];
+  save();
+  const card = document.getElementById('card_'+key);
+  const btn = card.querySelector('.ex-check');
+  if(checked[key]){
+    card.classList.add('checked');
+    btn.classList.add('done');
+    btn.style.background = color;
+    btn.textContent = '✓';
+    showToast('✓ Done!');
+  } else {
+    card.classList.remove('checked');
+    btn.classList.remove('done');
+    btn.style.background = '';
+    btn.style.borderColor = color+'44';
+    btn.textContent = '';
+  }
+  // Update progress
+  if(activeDay){
+    const day = DAYS.find(d=>d.id===activeDay);
+    const {done,total} = dayProgress(activeDay);
+    const progFill = document.querySelector('.day-header .progress-fill');
+    const progText = document.querySelector('.day-progress-row span');
+    if(progFill) progFill.style.width = `${total>0?(done/total)*100:0}%`;
+    if(progText) progText.textContent = `${done} of ${total} done`;
+  }
+}
+
+function toggleExpand(id){
+  expanded[id] = !expanded[id];
+  const el = document.getElementById(id);
+  if(el) el.classList.toggle('open', !!expanded[id]);
+  const btn = el ? el.closest('.ex-card').querySelector('.expand-btn') : null;
+  if(btn) btn.textContent = expanded[id] ? '▴' : '▾';
+}
+
+// ─── IMAGE SEARCH ────────────────────────────────────────────────────────────
+function toggleImgSearch(boxId, query){
+  const box = document.getElementById(boxId);
+  if(!box) return;
+
+  if(box.classList.contains('open')){
+    box.classList.remove('open');
+    box.innerHTML = '';
+    return;
+  }
+
+  // Make sure parent expand is open
+  const expand = box.closest('.ex-expand');
+  if(expand && !expand.classList.contains('open')){
+    expand.classList.add('open');
+    const key = expand.id.replace('expand_','');
+    expanded['expand_'+key] = true;
+    const btn = expand.closest('.ex-card').querySelector('.expand-btn');
+    if(btn) btn.textContent = '▴';
+  }
+
+  const decodedQuery = decodeURIComponent(query);
+  const googleUrl = `https://www.google.com/search?tbm=isch&q=${query}&igu=1`;
+  const fallbackUrl = `https://www.google.com/search?tbm=isch&q=${query}`;
+
+  box.classList.add('open');
+  box.innerHTML = `
+    <div class="img-search-top">
+      <span>Images: ${decodedQuery.replace('+exercise+how+to','').replace(/\+/g,' ')}</span>
+      <div class="img-search-links">
+        <a class="open-browser-btn" href="${fallbackUrl}" target="_blank">↗ Open</a>
+        <button class="close-img-btn" onclick="closeImgSearch('${boxId}')">✕</button>
+      </div>
+    </div>
+    <div class="img-iframe-wrap">
+      <iframe src="${googleUrl}" title="Exercise images" onload="checkIframe(this,'${boxId}')" onerror="showFallback('${boxId}','${fallbackUrl}')"></iframe>
+      <div class="iframe-fallback" id="fallback_${boxId}">
+        <div>Images blocked in preview</div>
+        <a href="${fallbackUrl}" target="_blank">Open Google Images →</a>
+      </div>
+    </div>`;
+}
+
+function checkIframe(iframe, boxId){
+  try {
+    // If iframe loaded but is blank or blocked, show fallback
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    if(!doc || doc.body.innerHTML === ''){
+      showFallback(boxId, '');
+    }
+  } catch(e){
+    // Cross-origin — iframe loaded external content (good sign, leave it)
+    // But Google often blocks iframes — show fallback after short delay
+    setTimeout(()=>{
+      try {
+        const d = iframe.contentDocument;
+        if(!d) return; // cross-origin = actually loaded
+      } catch(e2){
+        // cross-origin means it actually loaded — this is fine
+      }
+    }, 1500);
+  }
+}
+
+function showFallback(boxId, url){
+  const f = document.getElementById('fallback_'+boxId);
+  if(f) f.classList.add('show');
+  const iframe = f ? f.previousElementSibling : null;
+  if(iframe) iframe.style.display = 'none';
+}
+
+function closeImgSearch(boxId){
+  const box = document.getElementById(boxId);
+  if(box){ box.classList.remove('open'); box.innerHTML=''; }
+}
+
+// ─── RESET DAY ───────────────────────────────────────────────────────────────
+function resetDay(dayId){
+  const day = DAYS.find(d=>d.id===dayId);
+  if(!day) return;
+  day.sections.forEach((sec,si)=>{
+    sec.exercises.forEach((_,ei)=>{
+      delete checked[`d${dayId}_s${si}_e${ei}`];
+    });
+  });
+  save();
+  renderDayDetail(day);
+}
+
+// ─── WEEK CONTROL ────────────────────────────────────────────────────────────
+function changeWeek(dir){
+  currentWeek = Math.max(1, Math.min(16, currentWeek + dir));
+  save();
+  renderPhaseBar();
+  if(activeDay){
+    const day = DAYS.find(d=>d.id===activeDay);
+    renderDayDetail(day);
+  } else {
+    renderSchedule();
+  }
+}
+
+// ─── TAB SWITCHING ───────────────────────────────────────────────────────────
+function switchTab(tab, btn){
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('scheduleView').classList.toggle('hidden', tab!=='schedule');
+  document.getElementById('rulesView').classList.toggle('hidden', tab!=='rules');
+  if(tab==='rules') renderRules();
+  if(tab==='schedule'){ activeDay=null; renderSchedule(); }
+}
+
+// ─── RENDER RULES ────────────────────────────────────────────────────────────
+function renderRules(){
+  document.getElementById('rulesView').innerHTML = RULES.map(r=>`
+    <div class="rule-card">
+      <div class="rule-icon">${r.icon}</div>
+      <div><div class="rule-title">${r.title}</div><div class="rule-desc">${r.desc}</div></div>
+    </div>`).join('');
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function(){
+  renderPhaseBar();
+  renderSchedule();
+});
+</script>
+</body>
+</html>
