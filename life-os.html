@@ -330,6 +330,33 @@ a{text-decoration:none;color:inherit;}
 .sched-task.done div:last-child{text-decoration:line-through;}
 .sched-check{width:18px;height:18px;border-radius:5px;border:1px solid var(--dim);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--bg);}
 .sched-task.done .sched-check{background:var(--text);border-color:var(--text);}
+.ex-top2{display:flex;align-items:center;gap:10px;padding:12px 13px 8px;}
+.ex-target{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4;}
+.setlog{padding:0 13px 8px;}
+.set-hdr{display:flex;align-items:center;gap:8px;padding:2px 0 5px;}
+.sh-n{width:28px;font-size:8px;font-weight:800;color:var(--muted);letter-spacing:1px;}
+.sh-w,.sh-r{flex:1;font-size:8px;font-weight:800;color:var(--muted);letter-spacing:1px;text-align:center;}
+.sh-x{width:62px;}
+.set-row{display:flex;align-items:center;gap:8px;padding:4px 0;}
+.set-row.sdone .set-in{border-color:var(--text);color:var(--text);}
+.set-row.ghost .set-in{opacity:0.4;}
+.set-n{width:28px;text-align:center;font-size:13px;font-weight:700;color:var(--muted);}
+.set-in{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:15px;font-weight:600;text-align:center;padding:9px 4px;font-family:inherit;}
+.set-in:focus{outline:none;border-color:var(--muted);}
+.set-tick{width:34px;height:34px;border-radius:8px;border:1px solid var(--dim);background:var(--surface);color:var(--bg);font-size:14px;font-weight:900;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.set-tick.on{background:var(--text);border-color:var(--text);}
+.set-del{width:24px;height:34px;color:var(--muted);font-size:18px;flex-shrink:0;background:none;}
+.add-set{width:100%;border:1px dashed var(--dim);border-radius:8px;background:none;color:var(--muted);font-size:12px;font-weight:700;padding:9px;margin-top:6px;}
+.details-toggle{width:100%;text-align:center;background:none;color:var(--muted);font-size:11px;font-weight:700;padding:9px;border-top:1px solid var(--border);}
+.locked-note{padding:10px 13px;font-size:11px;color:var(--muted);}
+.eat-switch{display:flex;gap:6px;margin-bottom:14px;}
+.eat-seg{flex:1;padding:11px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:13px;font-weight:700;}
+.eat-seg.on{background:var(--text);color:var(--bg);border-color:var(--text);}
+.more-section{padding:10px 16px;}
+.more-menu{display:flex;flex-direction:column;gap:8px;}
+.more-item{display:flex;align-items:center;justify-content:space-between;padding:16px 15px;border:1px solid var(--border);border-radius:11px;background:var(--card);color:var(--text);font-size:14px;font-weight:600;}
+.more-arr{color:var(--muted);font-size:18px;}
+.eat-section{padding:10px 16px;}
 .hidden{display:none!important;}
 .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:18px 18px calc(30px + env(safe-area-inset-bottom));width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
 .modal-handle{width:40px;height:4px;background:var(--dim);border-radius:2px;margin:0 auto 14px;}
@@ -357,13 +384,10 @@ a{text-decoration:none;color:inherit;}
       <div class="phase-name" id="phaseName"></div>
     </div>
     <div class="tabs">
-      <button class="tab active" id="tab_today" onclick="switchTab('today')">&#127765; Today</button>
-      <button class="tab" id="tab_schedule" onclick="switchTab('schedule')">&#128170; Train</button>
-      <button class="tab" id="tab_skincare" onclick="switchTab('skincare')">&#129524; Skin</button>
-      <button class="tab" id="tab_diet" onclick="switchTab('diet')">&#127869;&#65039; Diet</button>
-      <button class="tab" id="tab_progress" onclick="switchTab('progress')">&#128200; Progress</button>
-      <button class="tab" id="tab_library" onclick="switchTab('library')">&#128218; Lib</button>
-      <button class="tab" id="tab_rules" onclick="switchTab('rules')">&#128203; Rules</button>
+      <button class="tab active" id="tab_today" onclick="switchTab('today')">Today</button>
+      <button class="tab" id="tab_schedule" onclick="switchTab('schedule')">Train</button>
+      <button class="tab" id="tab_eat" onclick="switchTab('eat')">Eat</button>
+      <button class="tab" id="tab_more" onclick="switchTab('more')">More</button>
     </div>
   </div>
 </div>
@@ -381,6 +405,8 @@ a{text-decoration:none;color:inherit;}
 <div id="todayView" class="hidden today-os-section"></div>
 <div id="skincareView" class="hidden skincare-section"></div>
 <div id="dietView" class="hidden diet-section"></div>
+<div id="eatView" class="hidden eat-section"></div>
+<div id="moreView" class="hidden more-section"></div>
 <div id="progressView" class="hidden progress-section"></div>
 <div id="rulesView" class="hidden rules-section"></div>
 <div id="libraryView" class="hidden library-section"></div>
@@ -434,6 +460,25 @@ a{text-decoration:none;color:inherit;}
   </div>
 </div>
 
+<div class="modal-overlay hidden" id="jsonEditor" data-kind="diet">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="modal-title" id="jsonEditorTitle">JSON</div>
+      <button class="modal-close" onclick="closeJsonEditor()">&#10005;</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;">
+      <button class="export-btn secondary" onclick="copyJsonPrompt()" style="font-size:11px;padding:9px">Copy edit-prompt</button>
+      <button class="export-btn secondary" onclick="copyJsonOnly()" style="font-size:11px;padding:9px">Copy JSON</button>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.5">Copy the prompt, give it to Claude with your changes, paste the new JSON back here, then Save.</div>
+    <textarea class="edit-input" id="jsonEditorArea" rows="12" style="font-family:monospace;font-size:11px"></textarea>
+    <div class="export-row" style="margin-top:12px">
+      <button class="export-btn primary" onclick="saveJsonEdit()">Save changes</button>
+      <button class="export-btn secondary" onclick="resetJson()">Reset default</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <input type="file" id="importInput" style="display:none" accept=".json" onchange="importData(event)"/>
 <script>
@@ -832,17 +877,20 @@ function pickAnim(n){
   if(n.indexOf('jack')>=0)return 'jack';
   if(n.indexOf('rope')>=0||n.indexOf('knees')>=0||n.indexOf('climber')>=0||n.indexOf('butt kick')>=0||n.indexOf('shuffle')>=0||n.indexOf('sprint')>=0||n.indexOf('drill')>=0||n.indexOf('boxing')>=0||n.indexOf('march')>=0||n.indexOf('shake')>=0||n.indexOf('walk')>=0&&n.indexOf('wall walk')<0)return 'run';
   if(n.indexOf('leg swing')>=0||n.indexOf('circle')>=0||n.indexOf('cars')>=0||n.indexOf('rotation')>=0||n.indexOf('roll')>=0||n.indexOf('release')>=0||n.indexOf('fold')>=0||n.indexOf('cat-cow')>=0||n.indexOf('extension')>=0)return 'fold';
-  if(n.indexOf('vajrasana')>=0||n.indexOf('side bend')>=0||n.indexOf('pigeon')>=0||n.indexOf('frog stretch')>=0||n.indexOf('butterfly')>=0||n.indexOf('baby')>=0||n.indexOf('90')>=0||n.indexOf('lizard')>=0||n.indexOf('thread')>=0||n.indexOf('child')>=0||n.indexOf('legs up')>=0||n.indexOf('figure-4')>=0||n.indexOf('twist')>=0||n.indexOf('foam')>=0||n.indexOf('salutation')>=0||n.indexOf('nordic')>=0||n.indexOf('supported deep')>=0)return 'stretchfloor';
+  if(n.indexOf('vajrasana')>=0||n.indexOf('side bend')>=0||n.indexOf('pigeon')>=0||n.indexOf('frog stretch')>=0||n.indexOf('butterfly')>=0||n.indexOf('baby')>=0||n.indexOf('90')>=0||n.indexOf('lizard')>=0||n.indexOf('thread')>=0||n.indexOf('child')>=0||n.indexOf('legs up')>=0||n.indexOf('figure-4')>=0||(n.indexOf('twist')>=0&&n.indexOf('russian')<0&&n.indexOf('standing')<0)||n.indexOf('foam')>=0||n.indexOf('salutation')>=0||n.indexOf('nordic')>=0||n.indexOf('supported deep')>=0)return 'stretchfloor';
   if(n.indexOf('kegel')>=0||n.indexOf('mula')>=0||n.indexOf('vacuum')>=0||n.indexOf('hypopressive')>=0)return 'kegel';
   if(n.indexOf('breath')>=0||n.indexOf('scan')>=0)return 'breath';
   if(n.indexOf('lunge')>=0)return 'lunge';
   if(n.indexOf('push')>=0||n.indexOf('press')>=0&&n.indexOf('db')>=0)return 'pushup';
   if(n.indexOf('plank')>=0||n.indexOf('hollow')>=0||n.indexOf('l-sit')>=0||n.indexOf('dead bug')>=0)return 'plank';
+  if(n.indexOf('thruster')>=0)return 'squat';
   if(n.indexOf('bridge')>=0||n.indexOf('thrust')>=0||n.indexOf('pump')>=0||n.indexOf('donkey')>=0||n.indexOf('hydrant')>=0||n.indexOf('dragon')>=0)return 'bridge';
   if(n.indexOf('hang')>=0)return 'hang';
   if(n.indexOf('dip')>=0)return 'dip';
   if(n.indexOf('sit-up')>=0||n.indexOf('crunch')>=0||n.indexOf('v-up')>=0||n.indexOf('russian')>=0)return 'situp';
   if(n.indexOf('db swing')>=0||n.indexOf('swing 10')>=0)return 'swing';
+  if(n.indexOf('rear delt')>=0||n.indexOf('front raise')>=0||n.indexOf('wall slide')>=0||n.indexOf('dislocate')>=0||n.indexOf('pullover')>=0)return 'row';
+  if(n.indexOf('russian')>=0||n.indexOf('thruster')>=0)return n.indexOf('russian')>=0?'situp':'squat';
   if(n.indexOf('row')>=0||n.indexOf('curl')>=0||n.indexOf('farmer')>=0||n.indexOf('pull')>=0||n.indexOf('rdl')>=0||n.indexOf('deadlift')>=0||n.indexOf('raise')>=0&&n.indexOf('lateral raise')>=0||n.indexOf('shrug')>=0||n.indexOf('kickback')>=0||n.indexOf('halo')>=0||n.indexOf('suitcase')>=0||n.indexOf('shoulder')>=0&&n.indexOf('roll')<0)return 'row';
   if(n.indexOf('calf')>=0||n.indexOf('balance')>=0||n.indexOf('crow')>=0||n.indexOf('handstand')>=0||n.indexOf('wall walk')>=0||n.indexOf('pistol')>=0)return 'balance';
   if(n.indexOf('crawl')>=0||n.indexOf('man maker')>=0)return 'crawl';
@@ -906,35 +954,6 @@ function shade(hex){
 
 // ============ SPECIAL QUICK ROUTINES ============
 var SPECIALS=[
-{id:101,special:true,emoji:"\uD83D\uDCAA",name:"Full Body Dumbbell",tag:"NO-GYM COMPLETE WORKOUT",color:"var(--muted)",colorBg:"#1A1A1D",
-sub:"Gym replacement - every muscle group with your 5-7-10kg DBs",
-note:"Complete gym-replacement. Hits every muscle group with just your dumbbells. Do all 3 parts same day or split.",
-sessions:[
-{sid:"A",label:"Upper Body Push Pull",icon:"\uD83D\uDCAA",est:"18 min",exercises:[
-{name:"DB Floor Press",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(8,3,w)+" each arm";},steps:["Lie on back, DB in one hand","Press straight up over chest","Lower until arm touches floor","Floor protects the shoulder"],tip:"Chest and triceps. Start 7kg, move to 10kg when easy."},
-{name:"DB Bent Over Row",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(10,3,w)+" each arm";},steps:["Hand on sofa for support","DB hangs, pull to hip","Elbow drives back","Squeeze blade, lower slow"],tip:"Back thickness. 10kg."},
-{name:"DB Lateral Raise",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(8,3,w)+" reps";},steps:["5kg in each hand at sides","Raise arms out to shoulder height ONLY","Slight elbow bend, lead with elbows","Lower slow - ZERO shoulder pain allowed"],tip:"Side delts. STOP instantly if shoulder complains. Small range is fine."},
-{name:"DB Curl",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(10,3,w)+" each arm";},steps:["Palm forward, elbow pinned to side","Curl to shoulder","Lower 3 counts slow"],tip:"Biceps. 7kg. The slow lower is the growth."},
-{name:"DB Triceps Kickback",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(10,3,w)+" each arm";},steps:["Bend over, upper arm parallel to floor","Kick DB back to full lockout","Squeeze 1s, return slow"],tip:"Triceps. 5kg. Shoulder-safe angle."},
-{name:"DB Shrug",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(12,3,w)+" reps";},steps:["Heaviest DBs at sides","Shrug shoulders straight up to ears","Hold 1s, lower slow"],tip:"Traps. 10kg both hands."}
-]},
-{sid:"B",label:"Lower Body Power",icon:"\uD83E\uDDB5",est:"18 min",exercises:[
-{name:"Goblet Squat",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return repsScale(10,4,w)+" reps";},steps:["10kg held at chest","Squat deep, elbows inside knees","Chest up, knees out","Drive through full foot"],tip:"The king of home leg work."},
-{name:"DB Romanian Deadlift",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(10,4,w)+" reps";},steps:["Both DBs in front of thighs","Hips push BACK, soft knees","Lower to mid-shin along legs","Hamstrings load, drive hips forward"],tip:"Hamstrings and glutes. Posterior power."},
-{name:"DB Reverse Lunge",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(8,3,w)+" each leg";},steps:["7kg in each hand at sides","Step back into lunge","Back knee toward floor","Push through front heel"],tip:"Single leg strength plus balance."},
-{name:"DB Sumo Squat",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(10,4,w)+" reps";},steps:["Wide stance, 10kg hanging between legs","Squat straight down","Knees push out hard"],tip:"Inner thigh and glutes."},
-{name:"DB Calf Raise",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(15,5,w)+" reps";},steps:["DBs at sides, balls of feet on a book edge","Rise to max tiptoe","Pause 1s top, lower heels below edge slow"],tip:"Calves respond to full range and high reps."},
-{name:"DB Swing",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(12,5,w)+" reps";},steps:["10kg between legs, hinge","Snap hips forward - DB to chest height","Arms are ropes","Control the back swing"],tip:"Explosive hip power finisher."}
-]},
-{sid:"C",label:"Core and Carry",icon:"\uD83D\uDD25",est:"12 min",exercises:[
-{name:"DB Russian Twist",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(16,6,w)+" total";},steps:["Lean back 45, 5kg at chest","Rotate side to side","Feet up = harder"],tip:"Rotational core power."},
-{name:"Weighted Sit-Up",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(10,4,w)+" reps";},steps:["5kg hugged to chest","Full sit-up","Lower slow"],tip:"Progressive overload for abs."},
-{name:"DB Side Bend",base:true,db:true,sets:function(w){return "2 sets";},reps:function(w){return repsScale(10,4,w)+" each side";},steps:["7kg in one hand","Bend sideways slow, slide DB down thigh","Pull back up with the opposite oblique"],tip:"Obliques. One side at a time only."},
-{name:"Plank Pull-Through",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return repsScale(8,4,w)+" reps";},steps:["High plank, 5kg beside one hand","Reach under with other hand, drag DB across","Hips stay LEVEL - no rotation","Alternate sides"],tip:"Anti-rotation core - the secret stability builder."},
-{name:"DB Suitcase Hold",base:true,db:true,sets:function(w){return "2 sets";},reps:function(w){return repsScale(20,10,w)+" sec each side";},steps:["10kg in ONE hand only","Stand perfectly straight - no leaning","Core fights the sideways pull"],tip:"Grip plus obliques plus posture in one."},
-{name:"DB Halo",base:true,db:true,sets:function(w){return "2 sets";},reps:function(w){return repsScale(6,2,w)+" each direction";},steps:["5kg held at chest with both hands","Circle it slowly around your head","Keep ribs down, core tight","ONLY pain-free range"],tip:"Gentle shoulder mobility under light load. Stop if shoulder hurts."}
-]}
-]},
 {id:102,special:true,emoji:"\u26A1",name:"Instant Energy Boost",tag:"ADHD STUDY-BREAK FUEL",color:"var(--text)",colorBg:"#1A1A1D",
 sub:"Lazy ho? Low energy? 2-5 min me full recharge - brain blood flow ON",
 note:"Zero decisions needed - just follow top to bottom. Made for low-energy ADHD moments and long study sessions. Blood flows, brain wakes up.",
@@ -974,7 +993,59 @@ sessions:[
 ]}
 ]}
 ];
-function allDays(){return DAYS.concat(SPECIALS);}
+var DB_DAYS=[
+{id:201,emoji:"\uD83C\uDFCB\uFE0F",name:"Push Day",sub:"Chest, Shoulders, Triceps",color:"#BFBFBF",colorBg:"#1A1A1D",dbday:true,
+note:"Push muscles. Shoulder press included but light - respect any pain.",
+sessions:[
+{sid:"A",label:"Warm-Up + Activation",icon:"\u26A1",est:"12 min",exercises:[{name:"Arm Circles + Band Pull-Apart",base:true,sets:function(w){return "2 sets";},reps:function(w){return "15 each";},steps:["Big circles forward and back","Then band pull-aparts squeezing blades","Get blood into shoulders"],tip:"Never skip - protects the shoulder."},{name:"Scapular Push-Up",base:true,sets:function(w){return "2 sets";},reps:function(w){return "12 reps";},steps:["Push-up position arms straight","Chest sinks then push blades apart","Only shoulder blades move"],tip:"Serratus activation, shoulder insurance."}]},
+{sid:"B",label:"Main Press Work",icon:"\uD83D\uDCAA",est:"22 min",exercises:[{name:"DB Floor Press",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "10-12 reps";},steps:["Lie on back, DB in each hand","Press straight up over chest","Lower till upper arms touch floor","Floor limits range - shoulder safe"],tip:"Main chest builder. Go heavy-ish (10kg)."},{name:"DB Shoulder Press",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "10-12 reps";},steps:["Seated or standing, DBs at shoulders","Press straight overhead","ONLY if shoulder is pain-free","Lower slow, stop at any twinge"],tip:"Shoulder is healing - start light (5kg), add weight only when zero pain."},{name:"DB Incline Press Floor",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "12 reps";},steps:["Prop torso on cushions ~30 degrees","Press DBs up and slightly together","Upper chest focus"],tip:"Hits upper chest. Use 7kg."},{name:"DB Lateral Raise",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15-20 reps";},steps:["5kg each hand at sides","Raise out to shoulder height only","Lead with elbows, slight bend","Lower slow - high reps light weight"],tip:"Side delts = wider shoulders. High reps, light. Stop if shoulder hurts."}]},
+{sid:"C",label:"Triceps + Burnout",icon:"\uD83D\uDD25",est:"12 min",exercises:[{name:"DB Triceps Extension",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15-20 reps";},steps:["One DB both hands behind head","Extend up to lockout","Lower slow behind head"],tip:"Triceps mass. 7kg."},{name:"DB Triceps Kickback",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15 each arm";},steps:["Bent over, upper arm parallel to floor","Kick DB back to full lockout","Squeeze, return slow"],tip:"Shoulder-safe triceps finisher. 5kg."},{name:"Push-Up Burnout",base:true,sets:function(w){return "2 sets";},reps:function(w){return "max reps";},steps:["Standard or knee push-ups","Go to failure with good form","Empty the tank"],tip:"Bodyweight finisher."}]}
+]},
+{id:202,emoji:"\uD83C\uDFCB\uFE0F",name:"Pull Day",sub:"Back, Biceps, Rear Delts",color:"#BFBFBF",colorBg:"#1A1A1D",dbday:true,
+note:"Pull muscles. Balances all the pushing - key for posture.",
+sessions:[
+{sid:"A",label:"Warm-Up + Activation",icon:"\u26A1",est:"10 min",exercises:[{name:"Band Pull-Apart",base:true,sets:function(w){return "2 sets";},reps:function(w){return "20 reps";},steps:["Band at chest height","Pull apart, squeeze blades","Slow control"],tip:"Wakes up the back."},{name:"Cat-Cow + T-Spine Rotation",base:true,sets:function(w){return "2 sets";},reps:function(w){return "10 each";},steps:["All fours, arch and round spine","Then thread arm under and rotate up","Mobilize the upper back"],tip:"Spine prep before pulling."}]},
+{sid:"B",label:"Main Pull Work",icon:"\uD83D\uDCAA",est:"22 min",exercises:[{name:"DB Bent Over Row",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "10-12 each arm";},steps:["Hand on sofa for support","DB hangs, pull to hip","Elbow drives back past ribs","Squeeze blade, lower slow"],tip:"King of back builders. Go heavy (10kg)."},{name:"DB Romanian Deadlift",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "10-12 reps";},steps:["Both DBs in front of thighs","Hips push BACK, soft knees","Lower to mid-shin","Feel hamstrings, drive hips to stand"],tip:"Lower back + hamstrings + grip."},{name:"Inverted Row (table)",base:true,sets:function(w){return "3 sets";},reps:function(w){return "max reps";},steps:["Lie under sturdy table","Body straight, pull chest to edge","Squeeze, lower slow"],tip:"Bodyweight vertical-ish pull. Builds toward pull-ups."},{name:"DB Rear Delt Fly",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15-20 reps";},steps:["Bent over, DBs hang down","Raise out to sides like wings","Slight bend, squeeze rear delts"],tip:"Rear delts = posture + 3D shoulders. Light 5kg."}]},
+{sid:"C",label:"Arms + Traps",icon:"\uD83D\uDD25",est:"12 min",exercises:[{name:"DB Bicep Curl",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "12-15 each arm";},steps:["Palm forward, elbow pinned","Curl to shoulder","Lower 3 counts slow"],tip:"The slow lower builds the arm. 7kg."},{name:"DB Hammer Curl",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "12-15 reps";},steps:["Palms face each other","Curl up keeping neutral grip","Hits brachialis + forearm"],tip:"Thicker arms + forearm. 7kg."},{name:"DB Shrug",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15-20 reps";},steps:["Heaviest DBs at sides","Shrug straight up to ears","Hold 1s, lower slow"],tip:"Traps. 10kg both hands."}]}
+]},
+{id:203,emoji:"\uD83C\uDFCB\uFE0F",name:"Leg Day",sub:"Quads, Hamstrings, Glutes, Calves",color:"#BFBFBF",colorBg:"#1A1A1D",dbday:true,
+note:"The most important day for athleticism, power, and fat loss. Never skip legs.",
+sessions:[
+{sid:"A",label:"Warm-Up + Mobility",icon:"\u26A1",est:"10 min",exercises:[{name:"Leg Swings + Hip Circles",base:true,sets:function(w){return "2 sets";},reps:function(w){return "15 each";},steps:["Hold wall, swing legs front-back","Then side to side","Big hip circles each way"],tip:"Open the hips before loading."},{name:"Bodyweight Squat",base:true,sets:function(w){return "2 sets";},reps:function(w){return "20 reps";},steps:["Full depth, controlled","Knees track over toes","Warm up the pattern"],tip:"Grooves the movement."}]},
+{sid:"B",label:"Main Leg Work",icon:"\uD83D\uDCAA",est:"25 min",exercises:[{name:"DB Goblet Squat",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "10-12 reps";},steps:["10kg at chest, both hands","Squat deep, elbows inside knees","Chest up, drive through full foot"],tip:"The home leg king. Go deep."},{name:"DB Romanian Deadlift",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "10-12 reps";},steps:["DBs in front, hips back","Lower along legs to mid-shin","Hamstrings load, hips drive forward"],tip:"Hamstrings + glutes. Heavy."},{name:"DB Reverse Lunge",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "10-12 each leg";},steps:["7kg each hand","Step back into lunge","Back knee toward floor","Push through front heel"],tip:"Single-leg strength + balance."},{name:"DB Bulgarian Split Squat",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "8-10 each leg";},steps:["Rear foot on sofa","5kg each hand","Lower slow, drive through front heel"],tip:"Best single-leg builder. Brutal but worth it."}]},
+{sid:"C",label:"Glutes + Calves",icon:"\uD83D\uDD25",est:"12 min",exercises:[{name:"DB Sumo Squat",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15 reps";},steps:["Wide stance, 10kg between legs","Squat straight down","Knees push out hard"],tip:"Inner thigh + glutes."},{name:"DB Calf Raise",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "15-20 reps";},steps:["DBs at sides, balls of feet on a book","Rise to max tiptoe","Pause top, lower below slow"],tip:"Calves need full range + high reps."},{name:"Wall Sit Hold",base:true,pr:"wallsit",sets:function(w){return "2 sets";},reps:function(w){return "45-60 sec";},steps:["Back flat on wall, thighs parallel","Hold, breathe","Burn it out"],tip:"Quad endurance finisher."}]}
+]},
+{id:204,emoji:"\uD83C\uDFCB\uFE0F",name:"Shoulders + Arms",sub:"Delts, Biceps, Triceps, Forearms",color:"#BFBFBF",colorBg:"#1A1A1D",dbday:true,
+note:"Dedicated shoulder + arm day. The detail muscles that make you look trained.",
+sessions:[
+{sid:"A",label:"Warm-Up + Mobility",icon:"\u26A1",est:"10 min",exercises:[{name:"Band Pull-Apart + Dislocates",base:true,sets:function(w){return "2 sets";},reps:function(w){return "15 each";},steps:["Pull-aparts then slow over-and-back with band","Big range, no pain","Shoulder mobility"],tip:"Critical warm-up for shoulder day."},{name:"Scapular Wall Slides",base:true,sets:function(w){return "2 sets";},reps:function(w){return "12 reps";},steps:["Back to wall, arms in goalpost","Slide up and down keeping contact","Activates lower traps"],tip:"Healthy shoulder mechanics."}]},
+{sid:"B",label:"Shoulder Work",icon:"\uD83D\uDCAA",est:"22 min",exercises:[{name:"DB Shoulder Press",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "10-12 reps";},steps:["DBs at shoulders, press overhead","Pain-free range only","Lower slow and controlled","Start light, build up"],tip:"Main shoulder builder. Shoulder healing - earn the weight slowly."},{name:"DB Lateral Raise",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "15-20 reps";},steps:["5kg, raise to shoulder height","Lead with elbows","Slow lower, high reps"],tip:"Width. The signature delt move."},{name:"DB Front Raise",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "12-15 reps";},steps:["DBs in front of thighs","Raise straight to shoulder height","Alternate or together"],tip:"Front delts. 5kg."},{name:"DB Rear Delt Fly",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15-20 reps";},steps:["Bent over, raise DBs out like wings","Squeeze rear delts"],tip:"Completes the 3D shoulder. Light."}]},
+{sid:"C",label:"Arm Pump",icon:"\uD83D\uDD25",est:"14 min",exercises:[{name:"DB Bicep Curl",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "12-15 reps";},steps:["Palm forward, elbow pinned","Curl up, slow lower"],tip:"Biceps. 7kg."},{name:"DB Concentration Curl",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "12 each arm";},steps:["Sit, elbow on inner thigh","Curl one arm, peak squeeze","Slow negative"],tip:"Bicep peak. Strict form."},{name:"DB Overhead Triceps Extension",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15 reps";},steps:["One DB both hands overhead","Lower behind head, extend up"],tip:"Triceps long head. 7kg."},{name:"DB Wrist Curl",base:true,db:true,sets:function(w){return "2 sets";},reps:function(w){return "20 reps";},steps:["Forearms on thighs, palms up","Curl wrists up and down","Grip + forearm"],tip:"Forearm builder - helps every lift."}]}
+]},
+{id:205,emoji:"\uD83C\uDFCB\uFE0F",name:"Upper Body",sub:"Chest, Back, Shoulders, Arms",color:"#BFBFBF",colorBg:"#1A1A1D",dbday:true,
+note:"Full upper compound day. Second hit of the week for chest, back and shoulders.",
+sessions:[
+{sid:"A",label:"Warm-Up",icon:"\u26A1",est:"10 min",exercises:[{name:"Arm Circles + Band Pull-Apart",base:true,sets:function(w){return "2 sets";},reps:function(w){return "15 each";},steps:["Circles then pull-aparts","Full shoulder warm-up"],tip:"Prep push + pull."},{name:"Push-Up to Down Dog",base:true,sets:function(w){return "2 sets";},reps:function(w){return "8 reps";},steps:["Push-up then push hips up to inverted V","Flows chest and shoulders"],tip:"Dynamic upper warm-up."}]},
+{sid:"B",label:"Upper Compounds",icon:"\uD83D\uDCAA",est:"22 min",exercises:[{name:"DB Floor Press",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "10-12 reps";},steps:["DB each hand, press over chest","Lower to floor, press up"],tip:"Chest compound."},{name:"DB Bent Over Row",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "10-12 each arm";},steps:["Pull DB to hip, squeeze blade","Lower slow"],tip:"Back compound."},{name:"DB Shoulder Press",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "10-12 reps";},steps:["Press overhead, pain-free","Controlled"],tip:"Shoulder compound. Light to moderate."},{name:"DB Pullover Floor",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "12 reps";},steps:["Lie down, one DB both hands over chest","Lower behind head in arc","Pull back over chest"],tip:"Chest + lats + serratus. 7kg, controlled."}]},
+{sid:"C",label:"Combo + Core",icon:"\uD83D\uDD25",est:"12 min",exercises:[{name:"DB Curl + Press Combo",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "10 reps";},steps:["Curl DBs up then press overhead","One fluid movement","Biceps + shoulders together"],tip:"Time-efficient combo."},{name:"DB Lateral Raise",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15-20 reps";},steps:["Light, raise to shoulder height"],tip:"Delt width finisher."},{name:"Plank Shoulder Tap",base:true,sets:function(w){return "2 sets";},reps:function(w){return "20 taps";},steps:["High plank, tap opposite shoulder","Hips stay level, anti-rotation"],tip:"Core + shoulder stability."}]}
+]},
+{id:206,emoji:"\uD83C\uDFCB\uFE0F",name:"Lower Body",sub:"Quads, Hamstrings, Glutes, Calves",color:"#BFBFBF",colorBg:"#1A1A1D",dbday:true,
+note:"Second leg day, posterior-chain focus. Glutes and hamstrings = power and athleticism.",
+sessions:[
+{sid:"A",label:"Warm-Up + Activation",icon:"\u26A1",est:"10 min",exercises:[{name:"Leg Swings + Deep Squat Hold",base:true,sets:function(w){return "2 sets";},reps:function(w){return "30 sec";},steps:["Swing legs, then sit in deep squat","Open hips and ankles"],tip:"Mobility before loading."},{name:"Glute Bridge",base:true,sets:function(w){return "2 sets";},reps:function(w){return "15 reps";},steps:["On back, drive hips up","Squeeze glutes hard at top"],tip:"Wakes up glutes for the session."}]},
+{sid:"B",label:"Lower Compounds",icon:"\uD83D\uDCAA",est:"25 min",exercises:[{name:"DB Goblet Squat",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "10-12 reps";},steps:["10kg at chest, squat deep","Drive up through full foot"],tip:"Quad-dominant main lift."},{name:"DB Single Leg Hip Thrust",base:true,db:true,sets:function(w){return "5 sets";},reps:function(w){return "12-15 each leg";},steps:["Upper back on sofa, one leg extended","Drive up with single leg","Squeeze glute hard at top"],tip:"From your Hevy plan. Best glute + thrust-power builder - directly helps performance."},{name:"DB Walking/Reverse Lunge",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "12-15 each leg";},steps:["7kg each hand","Lunge deep, push through heel"],tip:"Single-leg volume. From your Hevy plan."},{name:"DB Stiff Leg Deadlift",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "12 reps";},steps:["Legs near straight, hips back","Lower DBs along legs","Hamstring stretch, drive up"],tip:"Hamstring isolation-ish. Controlled."}]},
+{sid:"C",label:"Calves + Glute Burn",icon:"\uD83D\uDD25",est:"12 min",exercises:[{name:"DB Calf Raise",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "15-20 reps";},steps:["Balls of feet on book, DBs at sides","Full range, pause at top"],tip:"Calves. High reps."},{name:"DB Frog Pump",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "20 reps";},steps:["Soles together, DB on hips","Pump hips up, squeeze glutes"],tip:"Glute burnout."},{name:"Plank Hold",base:true,pr:"plank",sets:function(w){return "2 sets";},reps:function(w){return "45-60 sec";},steps:["Forearms down, body straight","Squeeze everything"],tip:"Core finisher."}]}
+]},
+{id:207,emoji:"\uD83C\uDFCB\uFE0F",name:"Core + Conditioning",sub:"Abs, Obliques, Cardio, Power",color:"#BFBFBF",colorBg:"#1A1A1D",dbday:true,
+note:"Core strength + fat-burning conditioning. Ties the whole week together.",
+sessions:[
+{sid:"A",label:"Warm-Up",icon:"\u26A1",est:"8 min",exercises:[{name:"Jumping Jacks + Arm Swings",base:true,sets:function(w){return "2 sets";},reps:function(w){return "30 sec";},steps:["Light jacks then big arm swings","Raise the heart rate"],tip:"Get warm and loose."},{name:"Cat-Cow + Bird Dog",base:true,sets:function(w){return "2 sets";},reps:function(w){return "10 each";},steps:["Spine waves then opposite arm-leg reach","Core activation"],tip:"Wake up the deep core."}]},
+{sid:"B",label:"Core Circuit",icon:"\uD83D\uDCAA",est:"20 min",exercises:[{name:"DB Russian Twist",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "20 total";},steps:["Lean back 45, DB at chest","Rotate side to side","Feet up = harder"],tip:"Rotational core power."},{name:"DB Weighted Sit-Up",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15 reps";},steps:["DB hugged to chest","Full sit-up, lower slow"],tip:"Loaded abs."},{name:"DB Side Bend",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "15 each side";},steps:["DB one hand, bend sideways slow","Pull back up with obliques"],tip:"Obliques. One side at a time."},{name:"DB Suitcase Carry",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "30 sec each side";},steps:["10kg one hand, stand tall","Walk in place, no leaning","Core fights the pull"],tip:"Anti-lateral-flexion core + grip."}]},
+{sid:"C",label:"Conditioning Finisher",icon:"\uD83D\uDD25",est:"15 min",exercises:[{name:"DB Swing",base:true,db:true,sets:function(w){return "4 sets";},reps:function(w){return "15 reps";},steps:["10kg between legs, hinge","Snap hips, DB to chest height","Arms are ropes"],tip:"Explosive hip power + conditioning."},{name:"DB Thruster",base:true,db:true,sets:function(w){return "3 sets";},reps:function(w){return "12 reps";},steps:["Squat with DBs at shoulders","Stand and press overhead in one move","Full body burner"],tip:"Legs + shoulders + cardio. The finisher."},{name:"Mountain Climbers",base:true,sets:function(w){return "3 sets";},reps:function(w){return "30 sec";},steps:["High plank, drive knees fast","Keep hips level"],tip:"Cardio + core blast."}]}
+]},
+];
+
+function allDays(){return DAYS.concat(SPECIALS).concat(DB_DAYS);}
 function findDay(id){return allDays().find(function(d){return d.id===id;});}
 
 // ============ EDITS + KEYS ============
@@ -1130,6 +1201,109 @@ function lifeRec(){
 function lifeSave(){localStorage.setItem('ab2_life',JSON.stringify(lifeData));}
 var photos=JSON.parse(localStorage.getItem('ab2_photos')||'[]');
 
+// ============ SET/REP LOGGING ENGINE ============
+// Per-exercise set logs by date. Structure:
+// setLogs[exKey] = { 'YYYY-MM-DD': [ {w:10, r:12, done:true}, ... ] }
+var setLogs=JSON.parse(localStorage.getItem('ab2_setlogs')||'{}');
+function setLogsSave(){localStorage.setItem('ab2_setlogs',JSON.stringify(setLogs));}
+function exLog(exKey){
+  if(!setLogs[exKey])setLogs[exKey]={};
+  return setLogs[exKey];
+}
+function todaySets(exKey){
+  var l=exLog(exKey);var t=todayKey();
+  if(!l[t])l[t]=[];
+  return l[t];
+}
+// Most recent PAST day that has logged sets (for "last time")
+function lastSession(exKey){
+  var l=setLogs[exKey];if(!l)return null;
+  var t=todayKey();
+  var dates=Object.keys(l).filter(function(d){return d<t&&l[d]&&l[d].length;}).sort();
+  if(!dates.length)return null;
+  var d=dates[dates.length-1];
+  return{date:d,sets:l[d]};
+}
+function lastSessionText(exKey){
+  var ls=lastSession(exKey);
+  if(!ls)return '';
+  var parts=ls.sets.filter(function(s){return s.done;}).map(function(s){return (s.w?s.w+'kg\u00D7':'')+s.r;});
+  if(!parts.length)return '';
+  return parts.join(', ');
+}
+// suggested values for a new set = copy of previous set in same session, else last session's matching set
+function suggestSet(exKey,idx){
+  var ts=todaySets(exKey);
+  if(idx>0&&ts[idx-1])return{w:ts[idx-1].w,r:ts[idx-1].r};
+  var ls=lastSession(exKey);
+  if(ls&&ls.sets[idx])return{w:ls.sets[idx].w,r:ls.sets[idx].r};
+  if(ls&&ls.sets.length)return{w:ls.sets[ls.sets.length-1].w,r:ls.sets[ls.sets.length-1].r};
+  return{w:'',r:''};
+}
+function addSet(exKey){
+  var ts=todaySets(exKey);
+  var idx=ts.length;
+  var sug=suggestSet(exKey,idx);
+  ts.push({w:sug.w,r:sug.r,done:false,ghost:true});
+  setLogsSave();
+}
+function removeSet(exKey,idx){
+  var ts=todaySets(exKey);
+  ts.splice(idx,1);setLogsSave();
+}
+function updateSet(exKey,idx,field,val){
+  var ts=todaySets(exKey);
+  if(!ts[idx])return;
+  ts[idx][field]=val;ts[idx].ghost=false;
+  setLogsSave();
+}
+function toggleSetDone(exKey,idx){
+  var ts=todaySets(exKey);
+  if(!ts[idx])return;
+  ts[idx].done=!ts[idx].done;
+  if(ts[idx].done)ts[idx].ghost=false; // committing ghost = real
+  setLogsSave();
+}
+function setsDoneCount(exKey){
+  return todaySets(exKey).filter(function(s){return s.done;}).length;
+}
+
+// ---- set UI handlers ----
+function onSetInput(el){
+  updateSet(el.dataset.ek,parseInt(el.dataset.i),el.dataset.f,el.value);
+  var row=el.closest('.set-row');if(row)row.classList.remove('ghost');
+}
+function onSetTick(btn){
+  var ek=btn.dataset.ek,i=parseInt(btn.dataset.i);
+  toggleSetDone(ek,i);
+  var ts=todaySets(ek);var st=ts[i];
+  var row=btn.closest('.set-row');
+  if(row){
+    row.classList.toggle('sdone',st.done);
+    row.classList.remove('ghost');
+    btn.classList.toggle('on',st.done);
+    btn.innerHTML=st.done?'\u2713':'';
+  }
+  if(st.done&&notifEnabled&&typeof startTimer==='function'){} // no auto-timer unless enabled
+  // auto rest timer if turned on
+  if(st.done&&localStorage.getItem('ab2_resttimer')==='1'){startTimer(90,'Rest');}
+  refreshDoneCounts(ek);
+}
+function onSetDel(btn){
+  removeSet(btn.dataset.ek,parseInt(btn.dataset.i));
+  if(activeDay)renderDayDetail(findDay(activeDay));
+}
+function onAddSet(btn){
+  addSet(btn.dataset.ek);
+  if(activeDay)renderDayDetail(findDay(activeDay));
+}
+function refreshDoneCounts(ek){
+  // light refresh: re-render day to update session progress bars
+  if(activeDay)renderDayDetail(findDay(activeDay));
+}
+
+
+
 // ============ RENDER HEADER ============
 function renderPhaseBar(){
   var phase=getPhase(currentWeek);
@@ -1178,6 +1352,22 @@ function renderSchedule(){
     html+='<div class="special-sub">'+sp.sub+'</div></div>';
     html+='<div class="day-arrow">\u203A</div></button>';
   });
+  html+='<div class="quick-head">\uD83C\uDFCB\uFE0F 7-DAY DUMBBELL PROGRAM</div>';
+  html+='<div style="font-size:11px;color:var(--muted);margin:0 2px 10px;line-height:1.5">Gym-style split. Each muscle group 2x/week. Do one day per day to build a strong base before rejoining the gym.</div>';
+  DB_DAYS.forEach(function(d,i){
+    var rec=todayRec();
+    var chips='';
+    d.sessions.forEach(function(s){
+      var p=sessProgress(d.id,s);
+      chips+='<div class="sess-chip'+(p.done===p.total&&p.total>0?' sdone':'')+'">'+(p.done===p.total&&p.total>0?'\u2713':s.sid)+' '+s.sid+(p.total>0?' '+p.done+'/'+p.total:'')+'</div>';
+    });
+    html+='<button class="day-card" data-day="'+d.id+'" onclick="openDay(parseInt(this.dataset.day))">';
+    html+='<div class="day-glow" style="background:'+d.color+'"></div>';
+    html+='<div class="day-icon" style="background:'+d.colorBg+'">'+d.emoji+'</div>';
+    html+='<div class="day-meta"><div class="day-label" style="color:'+d.color+'">DB DAY '+(i+1)+' \u00B7 '+d.sub+'</div>';
+    html+='<div class="day-name">'+d.name+'</div><div class="sess-chips">'+chips+'</div></div>';
+    html+='<div class="day-arrow">\u203A</div></button>';
+  });
   document.getElementById('scheduleList').innerHTML=html;
 }
 
@@ -1186,7 +1376,9 @@ function sessProgress(dayId,sess){
   sess.exercises.forEach(function(ex,ei){
     if(ex.base||(ex.unlockWeek&&currentWeek>=ex.unlockWeek)){
       total++;
-      if(isChecked('d'+dayId+'_'+sess.sid+'_e'+ei))done++;
+      // an exercise counts as done if it has at least one completed set today,
+      // OR (legacy) the old checkbox was ticked
+      if(setsDoneCount(ex._key)>0||isChecked('d'+dayId+'_'+sess.sid+'_e'+ei))done++;
     }
   });
   return{done:done,total:total};
@@ -1212,9 +1404,11 @@ function renderDayDetail(day){
   html+='<button class="back-btn" style="color:'+day.color+'" onclick="closeDay()">\u2190 All Days</button>';
   html+='<div class="day-header-info">';
   html+='<div class="day-header-icon" style="background:'+day.colorBg+'">'+day.emoji+'</div>';
-  html+='<div><span class="dlabel" style="color:'+day.color+'">'+(day.special?day.tag:'DAY '+day.id+' - 3 PARTS')+'</span><div class="dname">'+day.name+'</div></div>';
+  var dlabelTxt=day.special?day.tag:(day.dbday?day.sub:'DAY '+day.id+' - 3 PARTS');
+  html+='<div><span class="dlabel" style="color:'+day.color+'">'+dlabelTxt+'</span><div class="dname">'+day.name+'</div></div>';
   html+='</div>';
   html+='<div class="day-note" style="border-color:'+day.color+';background:'+day.colorBg+'">\uD83D\uDCAC '+day.note+'</div>';
+  html+='<div class="rest-row"><button class="rest-btn" data-day="'+day.id+'" onclick="imgWorkoutDay(parseInt(this.dataset.day))">\u2B07 Save as image</button></div>';
   html+='<div class="rest-row"><span class="rest-label">REST TIMER</span>';
   html+='<button class="rest-btn" onclick="startTimer(30,String.fromCharCode(82,101,115,116))">30s</button>';
   html+='<button class="rest-btn" onclick="startTimer(60,String.fromCharCode(82,101,115,116))">60s</button>';
@@ -1249,41 +1443,61 @@ function renderDayDetail(day){
 function exCardHTML(day,sess,sIdx,ex,ei){
   var unlocked=ex.base||(ex.unlockWeek&&currentWeek>=ex.unlockWeek);
   var key='d'+day.id+'_'+sess.sid+'_e'+ei;
-  var isDone=isChecked(key);
+  var exKey=ex._key;
   var sets=fxSets(ex,currentWeek),reps=fxReps(ex,currentWeek);
   var isBonus=!ex.base;
   var timed=parseTime(reps);
-  var h='<div class="ex-card'+(isDone?' checked':'')+(isBonus?' bonus':'')+(isBonus&&unlocked?' unlocked':'')+'" id="card_'+key+'">';
-  h+='<div class="ex-top">';
-  h+='<button class="ex-check'+(isDone?' done':'')+'" style="'+(isDone?'background:'+day.color:'border-color:'+day.color+'55')+'" data-key="'+key+'" data-color="'+day.color+'" data-unlocked="'+(unlocked?1:0)+'" onclick="handleCheck(this)">'+(isDone?'\u2713':'')+'</button>';
+  var lastTxt=lastSessionText(exKey);
+  var doneSets=setsDoneCount(exKey);
+  var h='<div class="ex-card'+(isBonus?' bonus':'')+(isBonus&&unlocked?' unlocked':'')+'" id="card_'+key+'">';
+  // header row: name + target + done-count
+  h+='<div class="ex-top2">';
   h+='<div class="ex-info"><div class="ex-name">'+fxName(ex);
-  if(isBonus&&!unlocked)h+='<span class="locked-badge">\uD83D\uDD12 Wk '+ex.unlockWeek+'</span>';
-  if(isBonus&&unlocked)h+='<span class="bonus-badge">\u2B50 NEW</span>';
+  if(isBonus&&!unlocked)h+='<span class="locked-badge">Wk '+ex.unlockWeek+'</span>';
   if(ex.db)h+='<span class="db-badge">DB</span>';
-  if(ex.pr)h+='<span class="pr-badge">PR</span>';
-  h+='</div><div class="ex-sets"><b>'+sets+'</b> \u00B7 '+reps+'</div></div>';
-  h+='<div class="ex-actions">';
+  h+='</div><div class="ex-target">'+sets+' \u00B7 '+reps+(lastTxt?'  \u00B7  last: '+lastTxt:'')+'</div></div>';
   if(unlocked&&timed>0)h+='<button class="icon-btn" data-sec="'+timed+'" data-name="'+ex.name+'" onclick="startTimer(parseInt(this.dataset.sec),this.dataset.name)">\u23F1</button>';
-  h+='<button class="expand-btn" data-eid="exp_'+key+'" onclick="toggleExpand(this.dataset.eid)">\u25BE</button>';
-  h+='</div></div>';
+  h+='</div>';
+  if(unlocked){
+    // SET ROWS
+    var ts=todaySets(exKey);
+    h+='<div class="setlog" id="setlog_'+key+'">';
+    if(ts.length){
+      h+='<div class="set-hdr"><span class="sh-n">SET</span><span class="sh-w">KG</span><span class="sh-r">REPS</span><span class="sh-x"></span></div>';
+      ts.forEach(function(st,si){
+        h+='<div class="set-row'+(st.done?' sdone':'')+(st.ghost?' ghost':'')+'">';
+        h+='<span class="set-n">'+(si+1)+'</span>';
+        h+='<input class="set-in" inputmode="decimal" data-ek="'+exKey+'" data-i="'+si+'" data-f="w" value="'+(st.w!==''&&st.w!=null?st.w:'')+'" placeholder="-" oninput="onSetInput(this)"/>';
+        h+='<input class="set-in" inputmode="numeric" data-ek="'+exKey+'" data-i="'+si+'" data-f="r" value="'+(st.r!==''&&st.r!=null?st.r:'')+'" placeholder="-" oninput="onSetInput(this)"/>';
+        h+='<button class="set-tick'+(st.done?' on':'')+'" data-ek="'+exKey+'" data-i="'+si+'" onclick="onSetTick(this)">'+(st.done?'\u2713':'')+'</button>';
+        h+='<button class="set-del" data-ek="'+exKey+'" data-i="'+si+'" onclick="onSetDel(this)">\u00D7</button>';
+        h+='</div>';
+      });
+    }
+    h+='<button class="add-set" data-ek="'+exKey+'" data-key="'+key+'" onclick="onAddSet(this)">+ Add set</button>';
+    h+='</div>';
+    // DETAILS toggle (everything else hidden)
+    h+='<button class="details-toggle" data-eid="exp_'+key+'" onclick="toggleExpand(this.dataset.eid)">Details, demo & video \u25BE</button>';
+  } else {
+    h+='<div class="locked-note">Unlocks in week '+ex.unlockWeek+'</div>';
+  }
   h+='<div class="ex-expand" id="exp_'+key+'">';
   h+='<div class="steps-title">How to do it</div>';
   fxSteps(ex).forEach(function(s,i){h+='<div class="step"><div class="step-num">'+(i+1)+'</div><div>'+s+'</div></div>';});
   var tip=fxTip(ex);
-  if(tip)h+='<div class="tip-box">\uD83D\uDCA1 '+tip+'</div>';
-  h+='<div class="media-slot" data-mkey="'+ex._key+'"></div>';
+  if(tip)h+='<div class="tip-box">'+tip+'</div>';
+  h+='<div class="media-slot" data-mkey="'+exKey+'"></div>';
   h+='<div class="anim-wrap">'+genAnim(ex.name,day.color)+'</div>';
-  h+='<div class="anim-label">Movement demo</div>';
   var q=encodeURIComponent(fxName(ex)+' exercise tutorial');
   var qn=encodeURIComponent(fxName(ex));
   h+='<div class="link-row">';
-  h+='<a class="link-chip" href="https://www.google.com/search?tbm=isch&q='+q+'" target="_blank">\uD83D\uDD0D Images</a>';
-  h+='<a class="link-chip" href="https://www.youtube.com/results?search_query='+q+'" target="_blank">\u25B6 YouTube</a>';
-  h+='<a class="link-chip" href="https://giphy.com/search/'+qn+'-exercise" target="_blank">\uD83C\uDFA5 GIFs</a>';
+  h+='<a class="link-chip" href="https://www.google.com/search?tbm=isch&q='+q+'" target="_blank">Images</a>';
+  h+='<a class="link-chip" href="https://www.youtube.com/results?search_query='+q+'" target="_blank">Video</a>';
+  h+='<a class="link-chip" href="https://giphy.com/search/'+qn+'-exercise" target="_blank">GIF</a>';
   h+='</div>';
   h+='<div class="media-btn-row">';
-  h+='<button class="media-add" data-mkey="'+ex._key+'" onclick="mediaUpload(this.dataset.mkey)">\uD83D\uDCCE '+(hasMedia(ex._key)?'Change my GIF-Image':'Add my own GIF-Image')+'</button>';
-  if(hasMedia(ex._key))h+='<button class="media-rm" data-mkey="'+ex._key+'" onclick="mediaRemove(this.dataset.mkey)">\uD83D\uDDD1</button>';
+  h+='<button class="media-add" data-mkey="'+exKey+'" onclick="mediaUpload(this.dataset.mkey)">'+(hasMedia(exKey)?'Change my image':'Add my own image/GIF')+'</button>';
+  if(hasMedia(exKey))h+='<button class="media-rm" data-mkey="'+exKey+'" onclick="mediaRemove(this.dataset.mkey)">Remove</button>';
   h+='</div>';
   h+='</div></div>';
   return h;
@@ -1451,6 +1665,9 @@ function guidedDone(){
   var key='d'+g.dayId+'_'+g.sid+'_e'+item.ei;
   var rec=todayRec();
   if(!rec.checks[key]){rec.checks[key]=true;save();afterCheck(key);}
+  // also mark at least one completed set in the new logging system
+  var exKey=item.ex._key;
+  if(setsDoneCount(exKey)===0){var ts=todaySets(exKey);ts.push({w:'',r:fxReps(item.ex,currentWeek),done:true});setLogsSave();}
   g.pos++;renderGuided();
 }
 function guidedSkip(){guided.pos++;renderGuided();}
@@ -1579,6 +1796,8 @@ function renderProgress(){
   h+='</div><div style="font-size:11px;color:var(--muted);margin-top:8px">Monthly body/skin photos. Stored only on your device.</div></div>';
   // Reminders + Install
   h+='<div class="sec-eyebrow">REMINDERS</div><div class="panel"><div class="panel-head"><div class="panel-title">Local Reminders</div><button class="panel-action" onclick="'+(notifEnabled()?'disableNotif()':'requestNotif()')+'">'+(notifEnabled()?'Turn off':'Turn on')+'</button></div><div style="font-size:12px;color:var(--muted);line-height:1.6">Alerts for meal, meds and skincare times. Works best when the app is installed and open or in background. Phone fully closed may delay them (no server).</div></div>';
+  h+='<div class="sec-eyebrow">WORKOUT</div><div class="panel"><div class="panel-head"><div class="panel-title">Auto rest timer</div><button class="panel-action" onclick="toggleRestTimer()">'+(localStorage.getItem('ab2_resttimer')==='1'?'On':'Off')+'</button></div><div style="font-size:12px;color:var(--muted);line-height:1.6">When on, ticking a set auto-starts a 90s rest timer.</div></div>';
+  h+='<div class="sec-eyebrow">SAVE TODAY AS IMAGE</div><div class="panel"><div class="export-row"><button class="export-btn secondary" onclick="imgFullDay()">Day summary</button><button class="export-btn secondary" onclick="imgWorkoutDay(currentImgDay())">Today workout</button></div><div style="font-size:11px;color:var(--muted);margin-top:8px">Per-exercise images: open any exercise, you can also screenshot. Workout image needs you to have opened a day.</div></div>';
   h+='<div class="sec-eyebrow">INSTALL APP</div><div class="panel"><div style="font-size:12px;color:var(--muted);line-height:1.7">To install: open in <b style="color:var(--text)">Chrome</b>, tap the <b style="color:var(--text)">\u22EE menu</b> (top right) \u2192 <b style="color:var(--text)">Add to Home screen</b> / <b style="color:var(--text)">Install app</b>. It will open fullscreen with its own icon and work offline.</div></div>';
   h+='<div class="export-row"><button class="export-btn primary" onclick="exportData()">Export All Data</button><button class="export-btn secondary" onclick="triggerImport()">Import</button></div>';
   h+='<div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;padding-bottom:20px;">Export saves everything: week, history, PRs, weight, milestones - all days, all data.</div>';
@@ -1613,7 +1832,7 @@ function logWeight(){
 
 // ============ EXPORT / IMPORT ============
 function exportData(){
-  var data={version:4,exportedAt:new Date().toISOString(),currentWeek:currentWeek,history:history,prs:prs,weights:weights,miles:miles,edits:edits,lifeData:lifeData,photos:photos,media:{}};
+  var data={version:5,exportedAt:new Date().toISOString(),currentWeek:currentWeek,history:history,prs:prs,weights:weights,miles:miles,edits:edits,lifeData:lifeData,photos:photos,setLogs:setLogs,dietOverride:dietOverride,skinOverride:skinOverride,media:{}};
   var keys=Object.keys(mediaKeySet);
   var pending=keys.length;
   function finish(){
@@ -1652,6 +1871,9 @@ function importData(event){
         localStorage.setItem('ab2_edits',JSON.stringify(edits));
         lifeData=data.lifeData||{};localStorage.setItem('ab2_life',JSON.stringify(lifeData));
         photos=data.photos||[];localStorage.setItem('ab2_photos',JSON.stringify(photos));
+        setLogs=data.setLogs||{};localStorage.setItem('ab2_setlogs',JSON.stringify(setLogs));
+        if(data.dietOverride){dietOverride=data.dietOverride;localStorage.setItem('ab2_diet_json',JSON.stringify(dietOverride));}
+        if(data.skinOverride){skinOverride=data.skinOverride;localStorage.setItem('ab2_skin_json',JSON.stringify(skinOverride));}
         if(data.media){
           Object.keys(data.media).forEach(function(k){mediaSet(k,data.media[k]);});
         }
@@ -1768,8 +1990,8 @@ function fmtHM(){var d=new Date();var h=d.getHours(),m=d.getMinutes();return (h<
 
 // ============ TODAY (unified) ============
 function currentMeal(){
-  var h=nowH();
-  for(var i=0;i<MEALS.length;i++){if(h>=MEALS[i].window[0]&&h<MEALS[i].window[1])return MEALS[i];}
+  var h=nowH();var M=activeMeals();
+  for(var i=0;i<M.length;i++){if(h>=M[i].window[0]&&h<M[i].window[1])return M[i];}
   return null;
 }
 function currentRoutine(){
@@ -1828,7 +2050,7 @@ function skincareNow(){
   if(hour>=11&&hour<17)return{title:'Afternoon (reapply SPF)',steps:SKIN_MORNING,mode:'afternoon'};
   return{title:'Morning Routine',steps:SKIN_MORNING,mode:'morning'};
 }
-function nextMealOf(){var h=nowH(),nm=null;MEALS.forEach(function(m){if(!nm&&m.window[0]>h)nm=m;});return nm;}
+function nextMealOf(){var h=nowH(),nm=null;activeMeals().forEach(function(m){if(!nm&&m.window[0]>h)nm=m;});return nm;}
 function mealMacros(m){var p=0,cb=0,ft=0,fb=0;m.items.forEach(function(it){p+=it.p||0;cb+=it.cb||0;ft+=it.ft||0;fb+=it.fb||0;});return{p:p,cb:cb,ft:ft,fb:fb};}
 function toggleRoutine(bi,ti){
   var r=lifeRec();var k='b'+bi+'_t'+ti;
@@ -1839,12 +2061,14 @@ function addWater(n){var r=lifeRec();r.water=Math.max(0,Math.min(12,r.water+n));
 function setWater(n){var r=lifeRec();r.water=(r.water===n)?n-1:n;lifeSave();renderToday();}
 
 // ============ SKINCARE ============
-function renderSkincare(){
+function renderSkincare(){renderSkincareInto('skincareView');}
+function renderSkincareInto(tgt){
+  var SM=(skinOverride&&skinOverride.SKIN_MORNING)||SKIN_MORNING;var SN=(skinOverride&&skinOverride.SKIN_NIGHT)||SKIN_NIGHT;var SB=(skinOverride&&skinOverride.SKIN_BODY)||SKIN_BODY;
   var r=lifeRec();
   var d=new Date();var hour=d.getHours();var dow=d.getDay();
   var isNight=hour>=18||hour<5;
   var nightKey=SKIN_DAYMAP[dow];
-  var nightR=SKIN_NIGHT[nightKey];
+  var nightR=SN[nightKey];
   var dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   var h='';
   // Right now card
@@ -1853,7 +2077,7 @@ function renderSkincare(){
   h+='<div class="skin-mode-card"><div class="skin-mode-head" style="background:'+modeBg+'">';
   h+='<div class="skin-mode-label">Right now \u00B7 '+dayNames[dow]+'</div>';
   h+='<div class="skin-mode-title" style="color:'+modeColor+'">'+(isNight?'\uD83C\uDF19 Night: '+nightR.label:'\u2600\uFE0F Morning Routine')+'</div></div>';
-  var steps=isNight?nightR.steps:SKIN_MORNING;
+  var steps=isNight?nightR.steps:SM;
   var prefix=isNight?'n':'m';
   steps.forEach(function(s,i){
     var k='skin_'+prefix+'_'+i;var done=!!r.skin[k];
@@ -1863,7 +2087,7 @@ function renderSkincare(){
   h+='</div>';
   // Body routine
   h+='<div class="quick-head">\uD83E\uDDF4 BODY - AFTER SHOWER</div><div class="skin-mode-card"><div class="skin-mode-head" style="background:var(--card)">Body Care</div></div>';
-  SKIN_BODY.forEach(function(s,i){
+  SB.forEach(function(s,i){
     var k='skin_b_'+i;var done=!!r.skin[k];
     h+='<div class="skin-step"><div class="skin-num">'+(i+1)+'</div><div style="flex:1"><div class="skin-sname">'+s.name+'</div>'+(s.det?'<div class="skin-sdet">'+s.det+'</div>':'')+(s.wait?'<span class="skin-wait">\u23F1 '+s.wait+'</span>':'')+'</div>';
     h+='<div class="skin-check'+(done?' done':'')+'" data-k="'+k+'" onclick="toggleSkin(this.dataset.k)">'+(done?'\u2713':'')+'</div></div>';
@@ -1875,12 +2099,15 @@ function renderSkincare(){
   // Rules
   h+='<div class="quick-head">\u26A0\uFE0F SKIN RULES</div>';
   SKIN_RULES.forEach(function(rl){h+='<div class="rule-card"><div class="rule-icon">'+rl.icon+'</div><div><div class="rule-title">'+rl.t+'</div><div class="rule-desc">'+rl.d+'</div></div></div>';});
-  document.getElementById('skincareView').innerHTML=h;
+  h+='<div class="sec-eyebrow">CUSTOMIZE</div><button class="flat-btn" onclick="openJsonEditor(String.fromCharCode(115,107,105,110))">Edit my skincare (copy prompt / paste JSON)</button>';
+  document.getElementById(tgt||'skincareView').innerHTML=h;
 }
-function toggleSkin(k){var r=lifeRec();r.skin[k]=!r.skin[k];if(!r.skin[k])delete r.skin[k];lifeSave();renderSkincare();}
+function toggleSkin(k){var r=lifeRec();r.skin[k]=!r.skin[k];if(!r.skin[k])delete r.skin[k];lifeSave();if(currentTab==='eat')renderEat();else renderSkincare();}
 
 // ============ DIET ============
-function renderDiet(){
+function renderDiet(){renderDietInto('dietView');}
+function renderDietInto(tgt){
+  var MEALS=activeMeals();var DIET_DAILY=activeDietDaily();
   var r=lifeRec();
   var meal=currentMeal();
   var h='';
@@ -1930,9 +2157,10 @@ function renderDiet(){
   var r2=lifeRec();
   h+='<div class="quick-head">\u23F3 INTERMITTENT FASTING</div><div class="panel"><div class="panel-head"><div class="panel-title">Eating Window</div><button class="panel-action" onclick="logFast()">'+(r2.fast?'Edit':'Set')+'</button></div>';
   h+='<div style="font-size:12px;color:#C0D0E0;line-height:1.6">'+(r2.fast?'First food: <b style="color:var(--green)">'+r2.fast.start+'</b> \u00B7 Last food: <b style="color:var(--orange)">'+r2.fast.end+'</b>':'Recommended 14hr fast. Tap Set to log when you first and last ate today.')+'</div></div>';
-  document.getElementById('dietView').innerHTML=h;
+  h+='<div class="sec-eyebrow">CUSTOMIZE</div><button class="flat-btn" onclick="openJsonEditor(String.fromCharCode(100,105,101,116))">Edit my diet (copy prompt / paste JSON)</button>';
+  document.getElementById(tgt||'dietView').innerHTML=h;
 }
-function toggleMeal(id){var r=lifeRec();r.meals[id]=!r.meals[id];if(!r.meals[id])delete r.meals[id];lifeSave();renderDiet();}
+function toggleMeal(id){var r=lifeRec();r.meals[id]=!r.meals[id];if(!r.meals[id])delete r.meals[id];lifeSave();if(currentTab==='eat')renderEat();else renderDiet();}
 function logFast(){
   var s=prompt('First food today (HH:MM):',lifeRec().fast?lifeRec().fast.start:'12:00');
   if(s===null)return;
@@ -1986,21 +2214,48 @@ function changeWeek(dir){
 }
 function switchTab(tab){
   currentTab=tab;
-  ['today','schedule','skincare','diet','progress','library','rules'].forEach(function(t){
-    var el=document.getElementById('tab_'+t);if(el)el.classList.toggle('active',t===tab);
+  // map primary tabs
+  var primary=tab;
+  if(tab==='skincare'||tab==='diet')primary='eat';
+  if(tab==='progress'||tab==='library'||tab==='rules')primary='more';
+  ['today','schedule','eat','more'].forEach(function(t){
+    var el=document.getElementById('tab_'+t);if(el)el.classList.toggle('active',t===primary);
   });
-  var views={today:'todayView',schedule:'scheduleView',skincare:'skincareView',diet:'dietView',progress:'progressView',library:'libraryView',rules:'rulesView'};
-  Object.keys(views).forEach(function(t){
-    var el=document.getElementById(views[t]);if(el)el.classList.toggle('hidden',t!==tab);
+  var allViews={today:'todayView',schedule:'scheduleView',skincare:'skincareView',diet:'dietView',progress:'progressView',library:'libraryView',rules:'rulesView',eat:'eatView',more:'moreView'};
+  Object.keys(allViews).forEach(function(t){
+    var el=document.getElementById(allViews[t]);if(el)el.classList.add('hidden');
   });
-  if(tab==='today')renderToday();
-  if(tab==='skincare')renderSkincare();
-  if(tab==='diet')renderDiet();
-  if(tab==='progress')renderProgress();
-  if(tab==='rules')renderRules();
-  if(tab==='library')renderLibrary('');
-  if(tab==='schedule'){activeDay=null;renderSchedule();}
+  if(tab==='today'){document.getElementById('todayView').classList.remove('hidden');renderToday();}
+  else if(tab==='schedule'){document.getElementById('scheduleView').classList.remove('hidden');activeDay=null;renderSchedule();}
+  else if(tab==='eat'){document.getElementById('eatView').classList.remove('hidden');renderEat(eatSub);}
+  else if(tab==='skincare'){eatSub='skin';switchTab('eat');return;}
+  else if(tab==='diet'){eatSub='diet';switchTab('eat');return;}
+  else if(tab==='more'){document.getElementById('moreView').classList.remove('hidden');renderMore();}
+  else if(tab==='progress'){document.getElementById('progressView').classList.remove('hidden');renderProgress();}
+  else if(tab==='library'){document.getElementById('libraryView').classList.remove('hidden');renderLibrary('');}
+  else if(tab==='rules'){document.getElementById('rulesView').classList.remove('hidden');renderRules();}
   window.scrollTo(0,0);
+}
+var eatSub='diet';
+function renderEat(sub){
+  eatSub=sub||eatSub;
+  var h='<div class="eat-switch">';
+  h+='<button class="eat-seg'+(eatSub==='diet'?' on':'')+'" onclick="renderEat(String.fromCharCode(100,105,101,116))">Diet</button>';
+  h+='<button class="eat-seg'+(eatSub==='skin'?' on':'')+'" onclick="renderEat(String.fromCharCode(115,107,105,110))">Skincare</button>';
+  h+='</div>';
+  h+='<div id="eatInner"></div>';
+  document.getElementById('eatView').innerHTML=h;
+  // render the chosen sub into eatInner by temporarily pointing render fns
+  if(eatSub==='diet'){renderDietInto('eatInner');}
+  else{renderSkincareInto('eatInner');}
+}
+function renderMore(){
+  var h='<div class="more-menu">';
+  h+='<button class="more-item" onclick="switchTab(String.fromCharCode(112,114,111,103,114,101,115,115))"><span>Progress & Stats</span><span class="more-arr">\u203A</span></button>';
+  h+='<button class="more-item" onclick="switchTab(String.fromCharCode(108,105,98,114,97,114,121))"><span>Exercise Library (edit)</span><span class="more-arr">\u203A</span></button>';
+  h+='<button class="more-item" onclick="switchTab(String.fromCharCode(114,117,108,101,115))"><span>Rules & Guide</span><span class="more-arr">\u203A</span></button>';
+  h+='</div>';
+  document.getElementById('moreView').innerHTML=h;
 }
 function renderRules(){
   var h='';
@@ -2069,6 +2324,184 @@ function scheduleReminders(){
     }
   });
 }
+
+
+
+// ============ DIET / SKINCARE JSON EDIT ============
+var dietOverride=JSON.parse(localStorage.getItem('ab2_diet_json')||'null');
+var skinOverride=JSON.parse(localStorage.getItem('ab2_skin_json')||'null');
+function activeMeals(){return dietOverride&&dietOverride.MEALS?dietOverride.MEALS:MEALS;}
+function activeDietDaily(){return dietOverride&&dietOverride.DIET_DAILY?dietOverride.DIET_DAILY:DIET_DAILY;}
+function dietJSON(){
+  return JSON.stringify({MEALS:activeMeals(),DIET_DAILY:activeDietDaily()},null,2);
+}
+function skinJSON(){
+  var o=skinOverride||{};
+  return JSON.stringify({
+    SKIN_MORNING:o.SKIN_MORNING||SKIN_MORNING,
+    SKIN_NIGHT:o.SKIN_NIGHT||SKIN_NIGHT,
+    SKIN_BODY:o.SKIN_BODY||SKIN_BODY
+  },null,2);
+}
+function copyText(txt,label){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){showToast('\u2713 '+(label||'Copied'));},function(){fallbackCopy(txt,label);});
+  }else fallbackCopy(txt,label);
+}
+function fallbackCopy(txt,label){
+  var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');showToast('\u2713 '+(label||'Copied'));}catch(e){showToast('Copy failed - select manually');}
+  document.body.removeChild(ta);
+}
+function dietPrompt(){
+  return 'Here is my current diet data as JSON. I want to edit it. '+
+  'Keep the exact same JSON structure and field names. '+
+  'MEALS is an array; each meal has id, name, icon (emoji unicode escape), time (HH:MM), window ([startHour,endHour] 24h), cal, target, color, items (array of {f:food name, c:calories, p:protein g, cb:carbs g, ft:fat g, fb:fibre g}), and note. '+
+  'DIET_DAILY has cal, protein, carbs, fat, fibre, water. '+
+  'After my changes, give me ONLY the updated JSON, nothing else.\n\nMY CHANGES: (describe here)\n\nCURRENT JSON:\n'+dietJSON();
+}
+function skinPrompt(){
+  return 'Here is my current skincare data as JSON. I want to edit it. '+
+  'Keep the exact same structure. SKIN_MORNING and SKIN_BODY are arrays of {name, det (details), wait (string or null)}. '+
+  'SKIN_NIGHT has keys azelaic, bha, rest - each {label, steps:[{name,det,wait}]}. '+
+  'After my changes, give me ONLY the updated JSON, nothing else.\n\nMY CHANGES: (describe here)\n\nCURRENT JSON:\n'+skinJSON();
+}
+function openJsonEditor(kind){
+  var cur=kind==='diet'?dietJSON():skinJSON();
+  var box=document.getElementById('jsonEditorBox');
+  document.getElementById('jsonEditorTitle').textContent=(kind==='diet'?'Diet':'Skincare')+' JSON';
+  document.getElementById('jsonEditorArea').value=cur;
+  document.getElementById('jsonEditor').dataset.kind=kind;
+  document.getElementById('jsonEditor').classList.remove('hidden');
+}
+function closeJsonEditor(){document.getElementById('jsonEditor').classList.add('hidden');}
+function copyJsonPrompt(){
+  var kind=document.getElementById('jsonEditor').dataset.kind;
+  copyText(kind==='diet'?dietPrompt():skinPrompt(),'Prompt copied - paste to Claude');
+}
+function copyJsonOnly(){
+  var kind=document.getElementById('jsonEditor').dataset.kind;
+  copyText(kind==='diet'?dietJSON():skinJSON(),'JSON copied');
+}
+function saveJsonEdit(){
+  var kind=document.getElementById('jsonEditor').dataset.kind;
+  var txt=document.getElementById('jsonEditorArea').value.trim();
+  // strip code fences if present
+  txt=txt.replace(/^```[a-z]*\n?/i,'').replace(/```$/,'').trim();
+  var data;
+  try{data=JSON.parse(txt);}catch(e){alert('Invalid JSON - check formatting. '+e.message);return;}
+  if(kind==='diet'){
+    if(!data.MEALS||!Array.isArray(data.MEALS)){alert('JSON must have a MEALS array');return;}
+    dietOverride=data;localStorage.setItem('ab2_diet_json',JSON.stringify(data));
+  }else{
+    if(!data.SKIN_MORNING){alert('JSON must have SKIN_MORNING');return;}
+    skinOverride=data;localStorage.setItem('ab2_skin_json',JSON.stringify(data));
+  }
+  closeJsonEditor();showToast('\u2713 Saved - data updated');
+  if(currentTab==='eat')renderEat();
+}
+function resetJson(){
+  var kind=document.getElementById('jsonEditor').dataset.kind;
+  if(!confirm('Reset to default '+kind+' data?'))return;
+  if(kind==='diet'){dietOverride=null;localStorage.removeItem('ab2_diet_json');}
+  else{skinOverride=null;localStorage.removeItem('ab2_skin_json');}
+  closeJsonEditor();showToast('\u2713 Reset to default');
+  if(currentTab==='eat')renderEat();
+}
+
+// ============ SAVE AS IMAGE ============
+function drawCard(lines,title){
+  // lines: array of {t:text, s:'h'|'sub'|'n'|'sep'}
+  var pad=40,W=720;
+  var lh={h:30,sub:26,n:38,sep:18};
+  var fh={h:34,sub:20,n:24};
+  var y=pad+60;
+  // measure height
+  var H=y;lines.forEach(function(l){H+=lh[l.s]||30;});H+=pad;
+  var cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  var x=cv.getContext('2d');
+  x.fillStyle='#0A0A0B';x.fillRect(0,0,W,H);
+  x.fillStyle='#EDEDED';x.font='800 30px sans-serif';x.fillText('Life OS',pad,pad+24);
+  x.fillStyle='#8A8A8F';x.font='600 16px sans-serif';x.fillText(title||new Date().toLocaleDateString(),pad,pad+48);
+  x.textBaseline='alphabetic';
+  lines.forEach(function(l){
+    if(l.s==='sep'){x.strokeStyle='#242427';x.beginPath();x.moveTo(pad,y);x.lineTo(W-pad,y);x.stroke();y+=lh.sep;return;}
+    if(l.s==='h'){x.fillStyle='#EDEDED';x.font='800 24px sans-serif';x.fillText(l.t,pad,y+18);y+=lh.h;return;}
+    if(l.s==='sub'){x.fillStyle='#8A8A8F';x.font='700 14px sans-serif';x.fillText(l.t,pad,y+14);y+=lh.sub;return;}
+    // n = normal row, support right-aligned after | 
+    x.fillStyle='#EDEDED';x.font='600 18px sans-serif';
+    if(l.t.indexOf('||')>=0){var pp=l.t.split('||');x.fillText(pp[0],pad,y+22);x.textAlign='right';x.fillStyle='#BFBFBF';x.fillText(pp[1],W-pad,y+22);x.textAlign='left';}
+    else x.fillText(l.t,pad,y+22);
+    y+=lh.n;
+  });
+  return cv;
+}
+function downloadCanvas(cv,name){
+  cv.toBlob(function(blob){
+    var url=URL.createObjectURL(blob);var a=document.createElement('a');
+    a.href=url;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('\u2713 Image saved');
+  });
+}
+function imgWorkoutDay(dayId,dateKey){
+  var day=findDay(dayId);if(!day)return;
+  var dk=dateKey||todayKey();
+  var lines=[];
+  lines.push({t:day.name,s:'h'});
+  lines.push({t:dk,s:'sub'});
+  lines.push({s:'sep'});
+  day.sessions.forEach(function(s){
+    lines.push({t:s.label,s:'sub'});
+    s.exercises.forEach(function(ex){
+      if(!(ex.base||(ex.unlockWeek&&currentWeek>=ex.unlockWeek)))return;
+      var l=setLogs[ex._key];var sets=(l&&l[dk])?l[dk].filter(function(z){return z.done;}):[];
+      if(sets.length){
+        var txt=sets.map(function(z){return (z.w?z.w+'kg\u00D7':'')+z.r;}).join(', ');
+        lines.push({t:fxName(ex)+'||'+txt,s:'n'});
+      }else{
+        lines.push({t:fxName(ex)+'||'+fxReps(ex,currentWeek),s:'n'});
+      }
+    });
+  });
+  downloadCanvas(drawCard(lines,'Workout \u00B7 '+dk),'workout-'+dk+'.png');
+}
+function imgFullDay(dateKey){
+  var dk=dateKey||todayKey();
+  var lines=[];lines.push({t:'Daily Summary',s:'h'});lines.push({t:dk,s:'sub'});lines.push({s:'sep'});
+  // workout parts done
+  var th=history[dk];var lh2=lifeData[dk];
+  var wkParts=th&&th.sessions?Object.keys(th.sessions).length:0;
+  lines.push({t:'Workout parts done||'+wkParts,s:'n'});
+  // meals
+  var meals=lh2&&lh2.meals?Object.keys(lh2.meals).filter(function(k){return lh2.meals[k];}).length:0;
+  lines.push({t:'Meals eaten||'+meals+'/3',s:'n'});
+  // skin steps
+  var skin=lh2&&lh2.skin?Object.keys(lh2.skin).length:0;
+  lines.push({t:'Skincare steps||'+skin,s:'n'});
+  // water
+  var water=lh2&&lh2.water?lh2.water:0;
+  lines.push({t:'Water glasses||'+water+'/12',s:'n'});
+  if(lh2&&lh2.sleep)lines.push({t:'Sleep||'+lh2.sleep.hrs+' hrs',s:'n'});
+  downloadCanvas(drawCard(lines,'Day Summary \u00B7 '+dk),'day-'+dk+'.png');
+}
+function imgExercise(exKey,dateKey){
+  var dk=dateKey||todayKey();
+  var f=findExByKey(exKey);if(!f)return;
+  var lines=[];lines.push({t:fxName(f.ex),s:'h'});lines.push({t:dk,s:'sub'});lines.push({s:'sep'});
+  var l=setLogs[exKey];var sets=(l&&l[dk])?l[dk]:[];
+  if(!sets.length){lines.push({t:'No sets logged',s:'n'});}
+  sets.forEach(function(z,i){lines.push({t:'Set '+(i+1)+'||'+(z.w?z.w+'kg \u00D7 ':'')+z.r+' reps'+(z.done?' \u2713':''),s:'n'});});
+  downloadCanvas(drawCard(lines,'Exercise log'),'exercise-'+dk+'.png');
+}
+
+
+function toggleRestTimer(){
+  var on=localStorage.getItem('ab2_resttimer')==='1';
+  if(on)localStorage.removeItem('ab2_resttimer');else localStorage.setItem('ab2_resttimer','1');
+  showToast(on?'Auto rest off':'Auto rest on');renderProgress();
+}
+function currentImgDay(){return activeDay||1;}
 
 // ============ PWA ============
 window.addEventListener('beforeinstallprompt',function(e){
