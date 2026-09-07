@@ -12,10 +12,13 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2300D4FF'/%3E%3Cstop offset='1' stop-color='%23A855F7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='192' height='192' rx='42' fill='%23090D13'/%3E%3Crect x='8' y='8' width='176' height='176' rx='36' fill='none' stroke='url(%23g)' stroke-width='3' opacity='0.5'/%3E%3Ctext x='96' y='118' font-size='90' text-anchor='middle' font-family='sans-serif'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E"/>
 <style>
 :root{
-  --bg:#0A0A0B;--surface:#111113;--card:#141416;--card2:#1A1A1D;--border:#242427;
-  --text:#EDEDED;--muted:#8A8A8F;--dim:#39393D;
-  --accent:#EDEDED;--accent2:#BFBFBF;--green:#9FB89F;--orange:#C4A88A;
-  --purple:#A9A4C4;--red:#C48A8A;--yellow:#C4BC8A;--teal:#8AB4A8;
+  --bg:#0B0A14;--surface:#151322;--card:#1A1730;--card2:#221E3C;--border:#2E2950;
+  --text:#F4F1FF;--muted:#9E97C4;--dim:#3B3560;
+  --accent:#00E5FF;--accent2:#A78BFA;--green:#2EE6A8;--orange:#FF8A3D;
+  --purple:#B78BFF;--red:#FF5C8A;--yellow:#FFD43B;--teal:#2DD4BF;
+  /* domain colours */
+  --c-am:#FFB020;--c-pm:#A78BFA;--c-rest:#2EE6A8;--c-food:#FF7A45;
+  --c-water:#38BDF8;--c-train:#00E5FF;--c-body:#2DD4BF;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:520px;margin:0 auto;padding-bottom:110px;}
@@ -366,6 +369,73 @@ a{text-decoration:none;color:inherit;}
 .edit-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;padding:10px 12px;font-family:inherit;resize:vertical;}
 .edit-row{display:flex;gap:9px;}
 .hidden{display:none!important;}
+
+/* ===== v2: COLOURFUL TODAY ===== */
+.hero2{border-radius:20px;padding:16px 16px 14px;margin-bottom:12px;position:relative;overflow:hidden;color:#0A0A12;}
+.hero2::after{content:"";position:absolute;right:-46px;top:-56px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,0.16);}
+.hero2-eyebrow{font-size:11px;font-weight:900;letter-spacing:1px;opacity:0.72;position:relative;}
+.hero2-title{font-size:25px;font-weight:900;letter-spacing:-0.5px;margin:2px 0 3px;position:relative;line-height:1.1;}
+.hero2-sub{font-size:13px;font-weight:700;opacity:0.82;position:relative;}
+.hero2-prog{height:7px;border-radius:99px;background:rgba(0,0,0,0.18);margin-top:12px;overflow:hidden;position:relative;}
+.hero2-prog i{display:block;height:100%;border-radius:99px;background:#0A0A12;transition:width 0.35s;}
+.hero2-pct{position:absolute;right:14px;top:14px;background:rgba(0,0,0,0.16);border-radius:99px;padding:5px 11px;font-size:12px;font-weight:900;}
+
+.nlist{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px;}
+.nstep{display:flex;align-items:flex-start;gap:11px;padding:12px 13px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;}
+.nstep:last-child{border-bottom:none;}
+.nstep:active{background:var(--card2);}
+.nnum{width:29px;height:29px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;background:var(--nc-soft);color:var(--nc);transition:all 0.18s;}
+.nbody{flex:1;min-width:0;}
+.nname{font-size:14px;font-weight:700;color:var(--text);line-height:1.3;}
+.ndet{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.nwait{display:inline-block;background:rgba(56,189,248,0.14);color:var(--c-water);font-size:10px;font-weight:800;padding:3px 9px;border-radius:99px;margin-top:5px;}
+.nqty{font-size:11px;font-weight:800;color:var(--nc);flex-shrink:0;margin-top:3px;}
+.ntick{width:23px;height:23px;border-radius:50%;border:2px solid var(--dim);flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#0A0A12;transition:all 0.18s;}
+.nstep.ndone .ntick{background:var(--nc);border-color:var(--nc);}
+.nstep.ndone .nnum{background:var(--nc);color:#0A0A12;}
+.nstep.ndone .nname{text-decoration:line-through;text-decoration-thickness:2px;color:var(--muted);}
+
+.ringrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.ringcell{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:11px 4px 9px;text-align:center;}
+.ringwrap{width:46px;height:46px;margin:0 auto 6px;position:relative;}
+.ringwrap svg{transform:rotate(-90deg);}
+.ringwrap b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;}
+.ringcell small{font-size:9.5px;color:var(--muted);font-weight:800;letter-spacing:0.2px;}
+
+.wgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:10px;}
+.wg{aspect-ratio:1/1.1;border-radius:11px;border:2px solid #24466B;background:rgba(56,189,248,0.06);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:all 0.15s;}
+.wg.on{background:var(--c-water);border-color:var(--c-water);}
+.wg:active{transform:scale(0.9);}
+
+.sechead{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:0.3px;margin:18px 2px 9px;color:var(--text);}
+.sechead small{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0;}
+.pillbtn{display:inline-flex;align-items:center;gap:6px;border-radius:11px;padding:11px 14px;font-size:13px;font-weight:800;background:var(--card2);border:1px solid var(--border);color:var(--text);}
+
+/* ===== v2: PLAN EDITOR ===== */
+.ed-overlay{position:fixed;inset:0;background:var(--bg);z-index:450;display:none;flex-direction:column;max-width:520px;margin:0 auto;}
+.ed-overlay.show{display:flex;}
+.ed-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface);}
+.ed-head .t{font-size:17px;font-weight:900;flex:1;}
+.ed-tabs{display:flex;gap:6px;padding:12px 16px 0;}
+.ed-tab{flex:1;padding:10px 4px;border-radius:10px;font-size:12px;font-weight:800;background:var(--card);color:var(--muted);border:1px solid var(--border);}
+.ed-tab.on{background:var(--accent);color:#0A0A12;border-color:var(--accent);}
+.ed-body{flex:1;overflow-y:auto;padding:14px 16px calc(30px + env(safe-area-inset-bottom));}
+.ed-group{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:11px;overflow:hidden;}
+.ed-group>summary{list-style:none;padding:13px 14px;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:9px;}
+.ed-group>summary::-webkit-details-marker{display:none;}
+.ed-group>summary::after{content:"\25BE";margin-left:auto;color:var(--muted);font-size:12px;}
+.ed-group[open]>summary::after{content:"\25B4";}
+.ed-in{padding:0 13px 13px;}
+.ed-row{display:flex;gap:7px;margin-bottom:7px;align-items:center;}
+.ed-f{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;padding:10px 11px;font-family:inherit;}
+.ed-f:focus{outline:none;border-color:var(--accent);}
+.ed-f.num{flex:0 0 66px;text-align:center;}
+.ed-f.tiny{flex:0 0 52px;text-align:center;padding:10px 4px;}
+.ed-x{flex:0 0 34px;height:36px;border-radius:9px;background:rgba(255,92,138,0.12);color:var(--red);font-size:16px;font-weight:900;border:none;}
+.ed-add{width:100%;border:1px dashed var(--dim);border-radius:9px;background:none;color:var(--accent);font-size:12px;font-weight:800;padding:10px;margin-top:4px;}
+.ed-del{background:rgba(255,92,138,0.12);color:var(--red);border-radius:9px;font-size:12px;font-weight:800;padding:9px 12px;border:none;}
+.ed-lbl{font-size:9.5px;font-weight:900;color:var(--muted);letter-spacing:1px;margin:11px 0 5px;}
+.ed-note{font-size:11.5px;color:var(--muted);line-height:1.55;margin-bottom:12px;}
 </style>
 </head>
 <body>
@@ -479,6 +549,20 @@ a{text-decoration:none;color:inherit;}
     </div>
   </div>
 </div>
+<div class="ed-overlay" id="planEditor">
+  <div class="ed-head">
+    <div class="t">&#9999;&#65039; Edit my plan</div>
+    <button class="ed-del" onclick="closePlanEditor()">Close</button>
+    <button class="pillbtn" style="background:var(--accent);color:#0A0A12;border:none" onclick="edSave()">&#10003; Save</button>
+  </div>
+  <div class="ed-tabs">
+    <button class="ed-tab" id="edtab_diet" onclick="edSwitch('diet')">Meals</button>
+    <button class="ed-tab" id="edtab_skin" onclick="edSwitch('skin')">Skincare</button>
+    <button class="ed-tab" id="edtab_goals" onclick="edSwitch('goals')">Goals</button>
+  </div>
+  <div class="ed-body" id="planEdBody"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 <input type="file" id="importInput" style="display:none" accept=".json" onchange="importData(event)"/>
 <script>
@@ -1168,23 +1252,30 @@ var ROUTINE=[
 
 {block:"Gym Prep",time:"16:10",icon:"\uD83C\uDFCB\uFE0F",color:"var(--text)",tasks:["Wear gloves","Wear hand protection","Wear mask","Wear socks","Wear jacket"]},
 {block:"Gym / Errands",time:"16:30",icon:"\uD83C\uDFCB\uFE0F",color:"var(--text)",tasks:["Buy curd","Buy chicken","Bath After Return","Lotion Bath After Return (skincare body)"]},
-{block:"Dinner",time:"19:00",icon:"\uD83C\uDF7D\uFE0F",color:"var(--text)",meal:true,tasks:["1 roti","Half chicken","1 cup dal","0.5 cup rice","10g ghee","Prep Oat shake (6g chia + 40g oat)"]},
+{block:"Dinner",time:"19:00",icon:"\uD83C\uDF7D\uFE0F",color:"var(--text)",meal:true,tasks:["1 cup rice","1 cup dal","Chicken breast 200g"]},
 
-{block:"Night Meds + Wind Down",time:"20:50",icon:"\uD83C\uDF19",color:"var(--muted)",tasks:["Eat Magdep CM @ 20:50","Eat Vitamin C @ 20:50","Drink Milk @ 22:00","Drink Isabgol 10 @ 22:00","Am + Pm skincare @ 22:30","Sleep @ 22:30"]}
+{block:"Night Meds + Wind Down",time:"20:50",icon:"\uD83C\uDF19",color:"var(--muted)",tasks:["Eat Magdep CM @ 20:50","Eat Vitamin C @ 20:50","Milk + 3 almond + Isabgol 10g @ 21:30","Am + Pm skincare @ 22:30","Sleep @ 22:30"]}
 ];
 
 // ============ DIET (time-aware, from your meal plan) ============
 var MEALS=[
-{id:"breakfast",name:"Breakfast",icon:"\uD83C\uDF73",time:"06:00",window:[5,10],cal:534,target:486,color:"#BFBFBF",
-items:[{f:"Plant protein scoop (Cosmix)",c:121,p:24,cb:4,ft:2,fb:1},{f:"Rolled oats (40g)",c:163,p:5,cb:27,ft:3,fb:4},{f:"Lactose-free milk (1 glass)",c:148,p:8,cb:12,ft:8,fb:0},{f:"Egg white (3)",c:51,p:11,cb:1,ft:0,fb:0},{f:"Chia seed (6g)",c:29,p:1,cb:2,ft:2,fb:2},{f:"Almond (3)",c:22,p:1,cb:1,ft:2,fb:0}],
-note:"Balanced breakfast (110% of budget). ~534 cal, ~51g protein, good fibre."},
-{id:"lunch",name:"Lunch",icon:"\uD83C\uDF5B",time:"13:00",window:[11,16],cal:613,target:486,color:"#BFBFBF",
+{id:"breakfast",name:"Breakfast",icon:"\uD83C\uDF73",time:"06:00",window:[5,11],cal:304,target:340,color:"#FFB020",
+items:[{f:"Boiled egg (1 large)",c:78,p:6,cb:1,ft:5,fb:0},{f:"Egg white (2)",c:34,p:7,cb:1,ft:0,fb:0},{f:"Rolled oats (40g)",c:163,p:5,cb:27,ft:3,fb:4},{f:"Chia seed (6g)",c:29,p:1,cb:2,ft:2,fb:2}],
+note:"Light start. ~19g protein, 6g fibre from the oats and chia."},
+{id:"lunch",name:"Lunch",icon:"\uD83C\uDF5B",time:"13:00",window:[11,16],cal:613,target:340,color:"#FF7A45",
 items:[{f:"Skinless chicken breast (200g)",c:240,p:45,cb:0,ft:5,fb:0},{f:"Plain cooked rice (1 katori)",c:120,p:3,cb:26,ft:0,fb:1},{f:"Cooked red gram dal (1 katori)",c:115,p:7,cb:18,ft:1,fb:3},{f:"Ghee cow (10g)",c:90,p:0,cb:0,ft:10,fb:0},{f:"Curd cow milk (80g)",c:48,p:3,cb:3,ft:3,fb:0}],
-note:"126% of budget. Protein-rich but low fibre (3.3g) - add a vegetable or salad."},
-{id:"dinner",name:"Dinner",icon:"\uD83C\uDF7D\uFE0F",time:"19:00",window:[16,23],cal:710,target:486,color:"#BFBFBF",
-items:[{f:"Chicken breast (200g)",c:240,p:45,cb:0,ft:5,fb:0},{f:"Lactose-free milk (250ml)",c:148,p:8,cb:12,ft:8,fb:0},{f:"Cooked red gram dal (1 katori)",c:115,p:7,cb:18,ft:1,fb:3},{f:"Roti (1)",c:85,p:3,cb:18,ft:1,fb:2},{f:"Plain rice (0.5 katori)",c:60,p:1,cb:13,ft:0,fb:1},{f:"Isabgol (10g)",c:40,p:0,cb:5,ft:0,fb:8},{f:"Almond (3)",c:22,p:1,cb:1,ft:2,fb:0}],
-note:"146% of budget - your heaviest meal. Cut milk or rice if trimming. Isabgol adds fibre + aids digestion."}
+note:"Unchanged. Biggest protein hit of the day at 58g."},
+{id:"gym",name:"In gym",icon:"\uD83C\uDFCB\uFE0F",time:"16:30",window:[16,18],cal:290,target:340,color:"#00E5FF",
+items:[{f:"Protein powder (1 scoop)",c:121,p:24,cb:4,ft:2,fb:1},{f:"Lactose-free milk (1 glass)",c:148,p:8,cb:12,ft:8,fb:0},{f:"Almond (3)",c:21,p:1,cb:1,ft:2,fb:0}],
+note:"Shake at the gym. 33g protein around training."},
+{id:"dinner",name:"Dinner",icon:"\uD83C\uDF7D\uFE0F",time:"19:00",window:[18,21],cal:475,target:340,color:"#FF5C8A",
+items:[{f:"Plain cooked rice (1 cup)",c:120,p:3,cb:26,ft:0,fb:1},{f:"Cooked red gram dal (1 cup)",c:115,p:7,cb:18,ft:1,fb:3},{f:"Chicken breast (200g)",c:240,p:45,cb:0,ft:5,fb:0}],
+note:"Roti removed. Lighter than before at 475 cal, still 55g protein."},
+{id:"bedtime",name:"Before sleeping",icon:"\uD83C\uDF19",time:"21:30",window:[21,23.99],cal:209,target:340,color:"#A78BFA",
+items:[{f:"Lactose-free milk (1 glass)",c:148,p:8,cb:12,ft:8,fb:0},{f:"Almond (3)",c:21,p:1,cb:1,ft:2,fb:0},{f:"Isabgol (10g)",c:40,p:0,cb:5,ft:0,fb:8}],
+note:"Isabgol carries most of the day's fibre here (8g)."}
 ];
+var DIET_VER=3;
 var DIET_DAILY={cal:1700,protein:161,carbs:153,fat:49,fibre:30,water:3.3};
 
 // ============ LIFE-OS STATE ============
@@ -1194,7 +1285,7 @@ function lifeRec(){
   var t=todayKey();
   if(!lifeData[t])lifeData[t]={skin:{},routine:{},meals:{},water:0,sleep:null,fast:null,gate:0};
   var r=lifeData[t];
-  if(!r.skin)r.skin={};if(!r.routine)r.routine={};if(!r.meals)r.meals={};
+  if(!r.skin)r.skin={};if(!r.routine)r.routine={};if(!r.meals)r.meals={};if(!r.food)r.food={};
   if(typeof r.water!=='number')r.water=0;if(typeof r.gate!=='number')r.gate=0;
   return r;
 }
@@ -2002,53 +2093,170 @@ function currentRoutine(){
   });
   return best;
 }
+// ---- v2 helpers: colours + numbered step rows ----
+var MEAL_COLORS=['#FF7A45','#FFB020','#FF5C8A','#2EE6A8','#38BDF8'];
+function mealColor(m,i){
+  if(m&&m.color&&m.color!=='#BFBFBF'&&m.color!=='var(--muted)'&&m.color!=='var(--text)')return m.color;
+  return MEAL_COLORS[i%MEAL_COLORS.length];
+}
+function softOf(hex){
+  if(hex.charAt(0)!=='#')return 'rgba(255,255,255,0.10)';
+  var r=parseInt(hex.substr(1,2),16),g=parseInt(hex.substr(3,2),16),b=parseInt(hex.substr(5,2),16);
+  return 'rgba('+r+','+g+','+b+',0.16)';
+}
+// one numbered, tappable row
+function nstep(i,name,det,wait,qty,done,color,onclick){
+  var h='<div class="nstep'+(done?' ndone':'')+'" style="--nc:'+color+';--nc-soft:'+softOf(color)+'" onclick="'+onclick+'">';
+  h+='<div class="nnum">'+(i+1)+'</div><div class="nbody"><div class="nname">'+name+'</div>';
+  if(det)h+='<div class="ndet">'+det+'</div>';
+  if(wait)h+='<span class="nwait">\u23F1 '+wait+'</span>';
+  h+='</div>';
+  if(qty)h+='<div class="nqty">'+qty+'</div>';
+  h+='<div class="ntick">'+(done?'\u2713':'')+'</div></div>';
+  return h;
+}
+function ringCell(done,total,color,label){
+  var p=total?Math.min(1,done/total):0,R=19,C=2*Math.PI*R;
+  return '<div class="ringcell"><div class="ringwrap"><svg width="46" height="46">'+
+    '<circle cx="23" cy="23" r="'+R+'" stroke="#2A2545" stroke-width="5" fill="none"></circle>'+
+    '<circle cx="23" cy="23" r="'+R+'" stroke="'+color+'" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-p))+'"></circle>'+
+    '</svg><b style="color:'+color+'">'+done+'</b></div><small>'+label+'</small></div>';
+}
+// per-food ticking
+function foodKey(mealId,i){return 'food_'+mealId+'_'+i;}
+function toggleFood(k){
+  var r=lifeRec();if(!r.food)r.food={};
+  r.food[k]=!r.food[k];if(!r.food[k])delete r.food[k];
+  lifeSave();
+  if(currentTab==='eat')renderEat();else renderToday();
+  if(navigator.vibrate)navigator.vibrate(12);
+}
+function foodDone(k){var r=lifeRec();return !!(r.food&&r.food[k]);}
+function waterGoal(){var d=activeDietDaily();return (d&&d.glasses)?d.glasses:12;}
+// A routine that isn't due yet is locked so a stray tap can't mark it done.
+var skinEarly=false;
+function skinStartEarly(){
+  skinEarly=true;
+  if(currentTab==='eat')renderEat();else renderToday();
+  showToast('Unlocked \u2014 tick away');
+}
+function resetToday(){
+  if(!confirm('Clear all of today\'s ticks? (skincare, food, water)'))return;
+  var t=todayKey();
+  lifeData[t]={skin:{},routine:{},meals:{},food:{},water:0,sleep:null,fast:null,gate:0};
+  lifeSave();skinEarly=false;
+  showToast('\u2713 Today cleared');
+  if(currentTab==='eat')renderEat();else if(currentTab==='today')renderToday();else renderMore();
+}
+
 function renderToday(){
   var r=lifeRec();
   var meal=currentMeal();
+  var M=activeMeals();
+  var mi=0;M.forEach(function(m,i){if(meal&&m.id===meal.id)mi=i;});
   var sk=skincareNow();
   var h='';
-  // RIGHT NOW - MEAL
-  h+='<div class="now-block"><div class="now-eyebrow">RIGHT NOW \u00B7 '+fmtHM()+'</div>';
+
+  // ---- HERO: what to do right now ----
+  var isNight=sk.mode==='night';
+  var mc=meal?mealColor(meal,mi):'#38BDF8';
+  var eatenNow=0;
+  if(meal)meal.items.forEach(function(it,i){if(foodDone(foodKey(meal.id,i)))eatenNow++;});
+  var pct=meal&&meal.items.length?Math.round(eatenNow/meal.items.length*100):0;
   if(meal){
-    h+='<div class="now-h">'+meal.name+'</div>';
-    h+='<div class="now-sub">'+meal.items.map(function(x){return x.f;}).join(' \u00B7 ')+'</div>';
-    h+='<div class="now-meta">~'+meal.cal+' cal \u00B7 '+mealMacros(meal).p+'g protein</div>';
+    h+='<div class="hero2" style="background:linear-gradient(135deg,'+mc+',rgba(0,0,0,0.22))">';
+    h+='<div class="hero2-eyebrow">'+meal.icon+' EATING NOW \u00B7 '+fmtHM()+'</div>';
+    h+='<div class="hero2-title">'+meal.name+'</div>';
+    h+='<div class="hero2-sub">~'+meal.cal+' cal \u00B7 '+mealMacros(meal).p+'g protein \u00B7 '+eatenNow+'/'+meal.items.length+' items</div>';
+    h+='<div class="hero2-prog"><i style="width:'+pct+'%"></i></div>';
+    h+='<div class="hero2-pct">'+pct+'%</div></div>';
+    h+='<div class="nlist">';
+    meal.items.forEach(function(it,i){
+      var k=foodKey(meal.id,i);
+      h+=nstep(i,it.f,'',null,it.c+' cal',foodDone(k),mc,'toggleFood(\''+k+'\')');
+    });
+    h+='</div>';
   } else {
     var nm=nextMealOf();
-    h+='<div class="now-h">Between meals</div>';
-    h+='<div class="now-sub">'+(nm?'Next: '+nm.name+' around '+nm.time:'Eating done for today')+'</div>';
+    h+='<div class="hero2" style="background:linear-gradient(135deg,#38BDF8,rgba(0,0,0,0.22))">';
+    h+='<div class="hero2-eyebrow">\uD83D\uDD52 RIGHT NOW \u00B7 '+fmtHM()+'</div>';
+    h+='<div class="hero2-title">Between meals</div>';
+    h+='<div class="hero2-sub">'+(nm?'Next: '+nm.name+' around '+nm.time:'Eating done for today')+'</div></div>';
   }
+
+  // ---- SKINCARE NOW (numbered + tickable, shares state with Eat tab) ----
+  var SKIN_HEX={azelaic:'#FF8A3D',bha:'#38BDF8',rest:'#2EE6A8'};
+  var skHex=(sk.mode==='morning')?'#FFB020':(sk.mode==='midday')?'#FFD43B':(SKIN_HEX[sk.nightKey]||'#A78BFA');
+  var skIcon=(sk.mode==='morning')?'\u2600\uFE0F':(sk.mode==='midday')?'\uD83E\uDDF4':'\uD83C\uDF19';
+  var pfx=sk.key;
+  var skDone=0;sk.steps.forEach(function(s,i){if(r.skin['skin_'+pfx+'_'+i])skDone++;});
+  var skLabel=(sk.mode==='morning')?'Skincare now':(sk.mode==='midday')?'Midday \u2014 reapply SPF':(sk.mode==='evening')?'Coming up tonight':'Skincare now';
+  var locked=(!sk.due&&!skinEarly);
+  h+='<div class="sechead">'+skIcon+' '+skLabel+'<small>'+(sk.due?skDone+' of '+sk.steps.length:'starts '+sk.startsAt)+'</small></div>';
+  h+='<div class="nlist"'+(locked?' style="opacity:0.5;pointer-events:none"':'')+'>';
+  sk.steps.forEach(function(s,i){
+    var k='skin_'+pfx+'_'+i;
+    h+=nstep(i,s.name,s.det,s.wait,null,!!r.skin[k],skHex,'toggleSkin(\''+k+'\')');
+  });
   h+='</div>';
-  // RIGHT NOW - SKINCARE
-  h+='<div class="now-block"><div class="now-eyebrow">SKINCARE NOW</div>';
-  h+='<div class="now-h">'+sk.title+'</div>';
-  h+='<div class="now-sub">'+sk.steps.map(function(s){return s.name;}).join(' \u00B7 ')+'</div>';
-  h+='</div>';
-  // QUICK SUMMARY
+  if(locked)h+='<button class="flat-btn" style="margin-bottom:12px;color:'+skHex+'" onclick="skinStartEarly()">Doing it now \u2014 unlock these steps</button>';
+
+  // ---- GLANCE RINGS ----
   var wkParts=0;var th=history[todayKey()];if(th&&th.sessions)wkParts=Object.keys(th.sessions).length;
+  var skinTotal=activeSkinMorning().length+activeSkinBody().length+sk.steps.length;
   var skinDone=Object.keys(r.skin).length;
   var mealsLogged=Object.keys(r.meals).filter(function(k){return r.meals[k];}).length;
-  h+='<div class="sum-eyebrow">TODAY AT A GLANCE</div>';
-  h+='<div class="sum-grid">';
-  h+='<div class="sum-cell"><div class="sum-v">'+wkParts+'</div><div class="sum-l">Workout parts</div></div>';
-  h+='<div class="sum-cell"><div class="sum-v">'+skinDone+'</div><div class="sum-l">Skin steps</div></div>';
-  h+='<div class="sum-cell"><div class="sum-v">'+mealsLogged+'/3</div><div class="sum-l">Meals</div></div>';
-  h+='<div class="sum-cell"><div class="sum-v">'+r.water+'</div><div class="sum-l">Water</div></div>';
+  h+='<div class="sechead">\u26A1 Today at a glance</div>';
+  h+='<div class="ringrow">';
+  h+=ringCell(wkParts,Math.max(wkParts,3),'#00E5FF','Workout');
+  h+=ringCell(skinDone,skinTotal,'#A78BFA','Skin steps');
+  h+=ringCell(mealsLogged,M.length,'#FF7A45','Meals');
+  h+=ringCell(r.water,waterGoal(),'#38BDF8','Water');
   h+='</div>';
-  // Water quick
-  h+='<div class="sum-eyebrow">WATER \u00B7 '+r.water+'/12</div>';
-  h+='<div class="water-line">';
-  for(var i=0;i<12;i++)h+='<div class="wcell'+(i<r.water?' on':'')+'" data-i="'+(i+1)+'" onclick="setWater(parseInt(this.dataset.i))"></div>';
+
+  // ---- WATER ----
+  var wg=waterGoal();
+  h+='<div class="sechead">\uD83D\uDCA7 Water<small>'+r.water+' of '+wg+' glasses</small></div>';
+  h+='<div class="wgrid">';
+  for(var i=0;i<wg;i++)h+='<div class="wg'+(i<r.water?' on':'')+'" data-i="'+(i+1)+'" onclick="setWater(parseInt(this.dataset.i))">'+(i<r.water?'\uD83D\uDCA7':'')+'</div>';
   h+='</div>';
   h+='<button class="flat-btn" onclick="addWater(1)">+ Add glass</button>';
+
+  // ---- EDIT SHORTCUT ----
+  h+='<div class="sechead">\u270F\uFE0F Change my plan</div>';
+  h+='<button class="flat-btn" onclick="openPlanEditor()">Edit meals, skincare & water goal</button>';
   document.getElementById('todayView').innerHTML=h;
 }
+function activeSkinMorning(){return (skinOverride&&skinOverride.SKIN_MORNING)||SKIN_MORNING;}
+function activeSkinNight(){return (skinOverride&&skinOverride.SKIN_NIGHT)||SKIN_NIGHT;}
+function activeSkinBody(){return (skinOverride&&skinOverride.SKIN_BODY)||SKIN_BODY;}
+// Editable window boundaries (24h). Morning starts at wake, night starts when you shower/wind down.
+var SKIN_WINDOWS=JSON.parse(localStorage.getItem('ab2_skin_win')||'null')||{morning:4,midday:11,evening:17,night:20};
+function skinWinSave(){localStorage.setItem('ab2_skin_win',JSON.stringify(SKIN_WINDOWS));}
+function spfStep(){
+  var SM=activeSkinMorning();
+  for(var i=SM.length-1;i>=0;i--){if(/spf|sunscreen/i.test(SM[i].name))return SM[i];}
+  return SM[SM.length-1];
+}
+// Returns the routine for RIGHT NOW. Every hour of the day maps to exactly one phase.
 function skincareNow(){
-  var d=new Date();var hour=d.getHours();var dow=d.getDay();
-  var isNight=hour>=18||hour<5;
-  if(isNight){var nk=SKIN_DAYMAP[dow];return{title:'Night: '+SKIN_NIGHT[nk].label,steps:SKIN_NIGHT[nk].steps,mode:'night'};}
-  if(hour>=11&&hour<17)return{title:'Afternoon (reapply SPF)',steps:SKIN_MORNING,mode:'afternoon'};
-  return{title:'Morning Routine',steps:SKIN_MORNING,mode:'morning'};
+  var d=new Date();var hour=d.getHours()+d.getMinutes()/60;var dow=d.getDay();
+  var SM=activeSkinMorning(),SN=activeSkinNight();
+  var W=SKIN_WINDOWS;
+  var nk=SKIN_DAYMAP[dow];
+  // night rolls past midnight, so check it first
+  if(hour>=W.night||hour<W.morning){
+    return{title:'Tonight: '+SN[nk].label,steps:SN[nk].steps,mode:'night',key:'n',nightKey:nk,due:true};
+  }
+  if(hour<W.midday){
+    return{title:'Morning Routine',steps:SM,mode:'morning',key:'m',due:true};
+  }
+  if(hour<W.evening){
+    return{title:'Reapply SPF',steps:[spfStep()],mode:'midday',key:'spf',due:true};
+  }
+  // evening gap: night routine is next, show it but flag it as not due yet
+  return{title:'Tonight: '+SN[nk].label,steps:SN[nk].steps,mode:'evening',key:'n',nightKey:nk,due:false,
+         startsAt:(W.night<10?'0':'')+Math.floor(W.night)+':00'};
 }
 function nextMealOf(){var h=nowH(),nm=null;activeMeals().forEach(function(m){if(!nm&&m.window[0]>h)nm=m;});return nm;}
 function mealMacros(m){var p=0,cb=0,ft=0,fb=0;m.items.forEach(function(it){p+=it.p||0;cb+=it.cb||0;ft+=it.ft||0;fb+=it.fb||0;});return{p:p,cb:cb,ft:ft,fb:fb};}
@@ -2057,52 +2265,87 @@ function toggleRoutine(bi,ti){
   r.routine[k]=!r.routine[k];if(!r.routine[k])delete r.routine[k];
   lifeSave();renderDiet();
 }
-function addWater(n){var r=lifeRec();r.water=Math.max(0,Math.min(12,r.water+n));lifeSave();renderToday();if(r.water>=12)showToast('\uD83D\uDCA7 Water goal hit!');}
-function setWater(n){var r=lifeRec();r.water=(r.water===n)?n-1:n;lifeSave();renderToday();}
+function addWater(n){var g=waterGoal();var r=lifeRec();r.water=Math.max(0,Math.min(g,r.water+n));lifeSave();renderToday();if(r.water>=g)showToast('\uD83D\uDCA7 Water goal hit!');}
+function setWater(n){var r=lifeRec();r.water=(r.water===n)?n-1:n;lifeSave();renderToday();if(navigator.vibrate)navigator.vibrate(10);}
 
 // ============ SKINCARE ============
 function renderSkincare(){renderSkincareInto('skincareView');}
 function renderSkincareInto(tgt){
   var SM=(skinOverride&&skinOverride.SKIN_MORNING)||SKIN_MORNING;var SN=(skinOverride&&skinOverride.SKIN_NIGHT)||SKIN_NIGHT;var SB=(skinOverride&&skinOverride.SKIN_BODY)||SKIN_BODY;
   var r=lifeRec();
-  var d=new Date();var hour=d.getHours();var dow=d.getDay();
-  var isNight=hour>=18||hour<5;
+  var d=new Date();var dow=d.getDay();
+  var sk=skincareNow();
+  var isNight=(sk.mode==='night'||sk.mode==='evening');
   var nightKey=SKIN_DAYMAP[dow];
   var nightR=SN[nightKey];
   var dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   var h='';
-  // Right now card
-  var modeColor=isNight?'var(--muted)':'var(--muted)';
-  var modeBg=isNight?'linear-gradient(135deg,#1A1530,#2A1A3A)':'linear-gradient(135deg,#2A1F0A,#3A2A0A)';
-  h+='<div class="skin-mode-card"><div class="skin-mode-head" style="background:'+modeBg+'">';
-  h+='<div class="skin-mode-label">Right now \u00B7 '+dayNames[dow]+'</div>';
-  h+='<div class="skin-mode-title" style="color:'+modeColor+'">'+(isNight?'\uD83C\uDF19 Night: '+nightR.label:'\u2600\uFE0F Morning Routine')+'</div></div>';
-  var steps=isNight?nightR.steps:SM;
-  var prefix=isNight?'n':'m';
+  var NIGHT_HEX={azelaic:'#FF8A3D',bha:'#38BDF8',rest:'#2EE6A8'};
+  var mainHex=(sk.mode==='morning')?'#FFB020':(sk.mode==='midday')?'#FFD43B':(NIGHT_HEX[nightKey]||'#A78BFA');
+  var steps=sk.steps;
+  var prefix=sk.key;
+  var dn=0;steps.forEach(function(s,i){if(r.skin['skin_'+prefix+'_'+i])dn++;});
+  var pc=steps.length?Math.round(dn/steps.length*100):0;
+  var eyebrow=(sk.mode==='morning')?'\u2600\uFE0F THIS MORNING':(sk.mode==='midday')?'\uD83E\uDDF4 MIDDAY':(sk.mode==='evening')?'\u23F3 COMING UP \u00B7 STARTS '+sk.startsAt:'\uD83C\uDF19 TONIGHT';
+  // Right now hero
+  h+='<div class="hero2" style="background:linear-gradient(135deg,'+mainHex+',rgba(0,0,0,0.22))">';
+  h+='<div class="hero2-eyebrow">'+eyebrow+' \u00B7 '+dayNames[dow].toUpperCase()+'</div>';
+  h+='<div class="hero2-title">'+(sk.mode==='midday'?'Reapply SPF':(isNight?nightR.label:'Morning Routine'))+'</div>';
+  h+='<div class="hero2-sub">'+(sk.due?dn+' of '+steps.length+' steps done':'Not due yet \u2014 starts around '+sk.startsAt)+'</div>';
+  h+='<div class="hero2-prog"><i style="width:'+pc+'%"></i></div><div class="hero2-pct">'+pc+'%</div></div>';
+  h+='<div class="nlist"'+((!sk.due&&!skinEarly)?' style="opacity:0.5;pointer-events:none"':'')+'>';
   steps.forEach(function(s,i){
-    var k='skin_'+prefix+'_'+i;var done=!!r.skin[k];
-    h+='<div class="skin-step"><div class="skin-num">'+(i+1)+'</div><div style="flex:1"><div class="skin-sname">'+s.name+'</div>'+(s.det?'<div class="skin-sdet">'+s.det+'</div>':'')+(s.wait?'<span class="skin-wait">\u23F1 '+s.wait+'</span>':'')+'</div>';
-    h+='<div class="skin-check'+(done?' done':'')+'" data-k="'+k+'" onclick="toggleSkin(this.dataset.k)">'+(done?'\u2713':'')+'</div></div>';
+    var k='skin_'+prefix+'_'+i;
+    h+=nstep(i,s.name,s.det,s.wait,null,!!r.skin[k],mainHex,'toggleSkin(\''+k+'\')');
   });
   h+='</div>';
+  if(!sk.due&&!skinEarly)h+='<button class="flat-btn" style="margin-bottom:12px;color:'+mainHex+'" onclick="skinStartEarly()">Doing it now \u2014 unlock these steps</button>';
+  // The other half of the day, so you can still tick it late
+  if(sk.mode!=='morning'){
+    var mDone=0;SM.forEach(function(s,i){if(r.skin['skin_m_'+i])mDone++;});
+    h+='<div class="sechead">\u2600\uFE0F Morning routine<small>'+mDone+' of '+SM.length+'</small></div><div class="nlist">';
+    SM.forEach(function(s,i){h+=nstep(i,s.name,s.det,s.wait,null,!!r.skin['skin_m_'+i],'#FFB020','toggleSkin(\'skin_m_'+i+'\')');});
+    h+='</div>';
+  }
+  if(!isNight){
+    var nDone=0;nightR.steps.forEach(function(s,i){if(r.skin['skin_n_'+i])nDone++;});
+    h+='<div class="sechead">\uD83C\uDF19 Tonight \u2014 '+nightR.label.replace(/\s*\([^)]*\)/,'')+'<small>'+nDone+' of '+nightR.steps.length+'</small></div><div class="nlist" style="opacity:0.5;pointer-events:'+(skinEarly?'auto':'none')+'">';
+    nightR.steps.forEach(function(s,i){h+=nstep(i,s.name,s.det,s.wait,null,!!r.skin['skin_n_'+i],NIGHT_HEX[nightKey]||'#A78BFA','toggleSkin(\'skin_n_'+i+'\')');});
+    h+='</div>';
+  }
   // Body routine
-  h+='<div class="quick-head">\uD83E\uDDF4 BODY - AFTER SHOWER</div><div class="skin-mode-card"><div class="skin-mode-head" style="background:var(--card)">Body Care</div></div>';
+  var bd=0;SB.forEach(function(s,i){if(r.skin['skin_b_'+i])bd++;});
+  h+='<div class="sechead">\uD83E\uDDF4 Body \u2014 after shower<small>'+bd+' of '+SB.length+'</small></div><div class="nlist">';
   SB.forEach(function(s,i){
-    var k='skin_b_'+i;var done=!!r.skin[k];
-    h+='<div class="skin-step"><div class="skin-num">'+(i+1)+'</div><div style="flex:1"><div class="skin-sname">'+s.name+'</div>'+(s.det?'<div class="skin-sdet">'+s.det+'</div>':'')+(s.wait?'<span class="skin-wait">\u23F1 '+s.wait+'</span>':'')+'</div>';
-    h+='<div class="skin-check'+(done?' done':'')+'" data-k="'+k+'" onclick="toggleSkin(this.dataset.k)">'+(done?'\u2713':'')+'</div></div>';
+    var k='skin_b_'+i;
+    h+=nstep(i,s.name,s.det,s.wait,null,!!r.skin[k],'#2DD4BF','toggleSkin(\''+k+'\')');
   });
   h+='</div>';
   // Weekly night schedule reference
-  h+='<div class="quick-head">\uD83D\uDCC5 NIGHT SCHEDULE</div><div class="panel" style="font-size:12px;color:#C0D0E0;line-height:1.9">';
-  h+='<b style="color:var(--muted)">Mon Wed Fri</b> - Azelaic Acid<br><b style="color:var(--muted)">Tue Thu Sat</b> - BHA 2% (leave on)<br><b style="color:var(--text)">Sun</b> - Rest (cleanser + moisturizer only)</div>';
+  h+='<div class="sechead">\uD83D\uDCC5 Night schedule</div><div class="nlist" style="padding:4px 0">';
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(function(dname,i){
+    var k=SKIN_DAYMAP[i];var hex=NIGHT_HEX[k]||'#A78BFA';var on=(i===dow);
+    h+='<div style="display:flex;align-items:center;gap:11px;padding:9px 13px;'+(on?'background:'+softOf(hex)+';':'')+'">';
+    h+='<div style="width:38px;font-size:12px;font-weight:900;color:'+(on?hex:'var(--muted)')+'">'+dname+'</div>';
+    h+='<div style="flex:1;font-size:12.5px;color:var(--text);font-weight:700">'+SN[k].label.replace(/\s*\([^)]*\)/,'')+'</div>';
+    h+='<div style="width:9px;height:9px;border-radius:50%;background:'+hex+'"></div></div>';
+  });
+  h+='</div>';
   // Rules
-  h+='<div class="quick-head">\u26A0\uFE0F SKIN RULES</div>';
-  SKIN_RULES.forEach(function(rl){h+='<div class="rule-card"><div class="rule-icon">'+rl.icon+'</div><div><div class="rule-title">'+rl.t+'</div><div class="rule-desc">'+rl.d+'</div></div></div>';});
-  h+='<div class="sec-eyebrow">CUSTOMIZE</div><button class="flat-btn" onclick="openJsonEditor(String.fromCharCode(115,107,105,110))">Edit my skincare (copy prompt / paste JSON)</button>';
+  h+='<div class="sechead">\u26A0\uFE0F Skin rules</div>';
+  SKIN_RULES.forEach(function(rl){h+='<div class="rule-card" style="border-left:3px solid var(--red)"><div class="rule-icon">'+rl.icon+'</div><div><div class="rule-title">'+rl.t+'</div><div class="rule-desc">'+rl.d+'</div></div></div>';});
+  h+='<div class="sechead">\u270F\uFE0F Customise</div>';
+  h+='<button class="flat-btn" style="margin-bottom:8px" onclick="openPlanEditor(String.fromCharCode(115,107,105,110))">Edit my skincare steps</button>';
+  h+='<button class="flat-btn" style="font-size:11.5px;color:var(--muted)" onclick="openJsonEditor(String.fromCharCode(115,107,105,110))">Advanced: edit as JSON</button>';
   document.getElementById(tgt||'skincareView').innerHTML=h;
 }
-function toggleSkin(k){var r=lifeRec();r.skin[k]=!r.skin[k];if(!r.skin[k])delete r.skin[k];lifeSave();if(currentTab==='eat')renderEat();else renderSkincare();}
+function toggleSkin(k){
+  var r=lifeRec();r.skin[k]=!r.skin[k];if(!r.skin[k])delete r.skin[k];lifeSave();
+  if(navigator.vibrate)navigator.vibrate(12);
+  if(currentTab==='eat')renderEat();
+  else if(currentTab==='today')renderToday();
+  else renderSkincare();
+}
 
 // ============ DIET ============
 function renderDiet(){renderDietInto('dietView');}
@@ -2138,26 +2381,35 @@ function renderDietInto(tgt){
   h+='<div class="macro-box"><div class="macro-v">'+tot.ft+'g</div><div class="macro-l">FAT</div></div>';
   h+='<div class="macro-box"><div class="macro-v">'+tot.fb+'g</div><div class="macro-l">FIBRE</div></div>';
   h+='</div>';
-  // Meals
-  h+='<div class="sec-eyebrow">YOUR MEAL PLAN</div>';
-  MEALS.forEach(function(m){
+  // Meals - numbered, colour-coded, tick each food
+  h+='<div class="sechead">\uD83C\uDF7D\uFE0F Your meal plan</div>';
+  MEALS.forEach(function(m,idx){
     var logged=!!r.meals[m.id];
     var isNow=meal&&meal.id===m.id;
-    h+='<div class="meal-card" style="'+(isNow?'border-color:'+m.color:'')+'">';
-    h+='<div class="meal-head"><div class="meal-icon" style="background:'+m.color+'22">'+m.icon+'</div>';
-    h+='<div><div class="meal-name">'+m.name+(isNow?' \u00B7 NOW':'')+'</div><div class="meal-time">'+m.time+' \u00B7 ~'+m.cal+' cal</div></div>';
-    h+='<div class="meal-cal"><button class="rtask-check" style="width:26px;height:26px;'+(logged?'background:var(--green);border-color:transparent':'')+'" data-m="'+m.id+'" onclick="toggleMeal(this.dataset.m)">'+(logged?'\u2713':'')+'</button></div></div>';
-    h+='<div class="meal-items">';
-    m.items.forEach(function(it){h+='<div class="meal-item"><span class="meal-item-f">'+it.f+'</span><span class="meal-item-c">'+it.c+' cal</span></div>';});
+    var mc=mealColor(m,idx);
+    var eaten=0;m.items.forEach(function(it,i){if(foodDone(foodKey(m.id,i)))eaten++;});
+    h+='<div class="meal-card" style="border-color:'+(isNow?mc:'var(--border)')+'">';
+    h+='<div class="meal-head" style="background:'+softOf(mc)+'"><div class="meal-icon" style="background:'+mc+';color:#0A0A12">'+m.icon+'</div>';
+    h+='<div style="flex:1;min-width:0"><div class="meal-name">'+m.name+(isNow?' <span style="font-size:9px;font-weight:900;background:'+mc+';color:#0A0A12;padding:2px 7px;border-radius:99px;vertical-align:middle">NOW</span>':'')+'</div>';
+    h+='<div class="meal-time" style="color:'+mc+'">'+m.time+' \u00B7 ~'+m.cal+' cal \u00B7 '+eaten+'/'+m.items.length+' eaten</div></div>';
+    h+='<button class="rtask-check" style="width:28px;height:28px;'+(logged?'background:'+mc+';border-color:transparent':'')+'" data-m="'+m.id+'" onclick="toggleMeal(this.dataset.m)">'+(logged?'\u2713':'')+'</button></div>';
+    h+='<div class="nlist" style="border:none;border-radius:0;margin:0;background:transparent">';
+    m.items.forEach(function(it,i){
+      var k=foodKey(m.id,i);
+      h+=nstep(i,it.f,'P'+(it.p||0)+' \u00B7 C'+(it.cb||0)+' \u00B7 F'+(it.ft||0)+' \u00B7 Fb'+(it.fb||0),null,it.c+' cal',foodDone(k),mc,'toggleFood(\''+k+'\')');
+    });
+    h+='</div>';
     var mm=mealMacros(m);
-    h+='<div class="meal-item" style="border-top:1px solid var(--border);padding-top:8px"><span class="meal-item-f">Total</span><span class="meal-item-c">'+m.cal+' cal \u00B7 P'+mm.p+' C'+mm.cb+' F'+mm.ft+' Fb'+mm.fb+'</span></div>';
-    h+='</div><div class="meal-note" style="border-color:var(--border)">'+m.note+'</div></div>';
+    h+='<div class="meal-item" style="padding:9px 14px;border-top:1px solid var(--border)"><span class="meal-item-f" style="font-weight:800">Total</span><span class="meal-item-c" style="color:'+mc+'">'+m.cal+' cal \u00B7 P'+mm.p+' C'+mm.cb+' F'+mm.ft+' Fb'+mm.fb+'</span></div>';
+    h+='<div class="meal-note" style="border-color:'+mc+'">'+m.note+'</div></div>';
   });
   // IF window
   var r2=lifeRec();
   h+='<div class="quick-head">\u23F3 INTERMITTENT FASTING</div><div class="panel"><div class="panel-head"><div class="panel-title">Eating Window</div><button class="panel-action" onclick="logFast()">'+(r2.fast?'Edit':'Set')+'</button></div>';
   h+='<div style="font-size:12px;color:#C0D0E0;line-height:1.6">'+(r2.fast?'First food: <b style="color:var(--green)">'+r2.fast.start+'</b> \u00B7 Last food: <b style="color:var(--orange)">'+r2.fast.end+'</b>':'Recommended 14hr fast. Tap Set to log when you first and last ate today.')+'</div></div>';
-  h+='<div class="sec-eyebrow">CUSTOMIZE</div><button class="flat-btn" onclick="openJsonEditor(String.fromCharCode(100,105,101,116))">Edit my diet (copy prompt / paste JSON)</button>';
+  h+='<div class="sechead">\u270F\uFE0F Customise</div>';
+  h+='<button class="flat-btn" style="margin-bottom:8px" onclick="openPlanEditor(String.fromCharCode(100,105,101,116))">Edit my meals & foods</button>';
+  h+='<button class="flat-btn" style="font-size:11.5px;color:var(--muted)" onclick="openJsonEditor(String.fromCharCode(100,105,101,116))">Advanced: edit as JSON</button>';
   document.getElementById(tgt||'dietView').innerHTML=h;
 }
 function toggleMeal(id){var r=lifeRec();r.meals[id]=!r.meals[id];if(!r.meals[id])delete r.meals[id];lifeSave();if(currentTab==='eat')renderEat();else renderDiet();}
@@ -2254,6 +2506,8 @@ function renderMore(){
   h+='<button class="more-item" onclick="switchTab(String.fromCharCode(112,114,111,103,114,101,115,115))"><span>Progress & Stats</span><span class="more-arr">\u203A</span></button>';
   h+='<button class="more-item" onclick="switchTab(String.fromCharCode(108,105,98,114,97,114,121))"><span>Exercise Library (edit)</span><span class="more-arr">\u203A</span></button>';
   h+='<button class="more-item" onclick="switchTab(String.fromCharCode(114,117,108,101,115))"><span>Rules & Guide</span><span class="more-arr">\u203A</span></button>';
+  h+='<button class="more-item" style="border-color:var(--accent);color:var(--accent)" onclick="openPlanEditor()"><span>\u270F\uFE0F Edit my plan (meals, skincare, goals)</span><span class="more-arr">\u203A</span></button>';
+  h+='<button class="more-item" style="border-color:var(--red);color:var(--red)" onclick="resetToday()"><span>\u21BA Clear today\u2019s ticks</span><span class="more-arr">\u203A</span></button>';
   h+='</div>';
   document.getElementById('moreView').innerHTML=h;
 }
@@ -2330,6 +2584,8 @@ function scheduleReminders(){
 // ============ DIET / SKINCARE JSON EDIT ============
 var dietOverride=JSON.parse(localStorage.getItem('ab2_diet_json')||'null');
 var skinOverride=JSON.parse(localStorage.getItem('ab2_skin_json')||'null');
+// If a saved plan predates the current built-in one, drop it so the new default shows.
+if(dietOverride&&dietOverride.v!==DIET_VER){dietOverride=null;localStorage.removeItem('ab2_diet_json');}
 function activeMeals(){return dietOverride&&dietOverride.MEALS?dietOverride.MEALS:MEALS;}
 function activeDietDaily(){return dietOverride&&dietOverride.DIET_DAILY?dietOverride.DIET_DAILY:DIET_DAILY;}
 function dietJSON(){
@@ -2407,6 +2663,138 @@ function resetJson(){
   else{skinOverride=null;localStorage.removeItem('ab2_skin_json');}
   closeJsonEditor();showToast('\u2713 Reset to default');
   if(currentTab==='eat')renderEat();
+}
+
+// ============ VISUAL PLAN EDITOR ============
+var edKind='diet',edDiet=null,edSkin=null;
+function edClone(o){return JSON.parse(JSON.stringify(o));}
+function edEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function openPlanEditor(kind){
+  edKind=kind||'diet';
+  edDiet=edClone({MEALS:activeMeals(),DIET_DAILY:activeDietDaily()});
+  var o=skinOverride||{};
+  edSkin=edClone({SKIN_MORNING:o.SKIN_MORNING||SKIN_MORNING,SKIN_NIGHT:o.SKIN_NIGHT||SKIN_NIGHT,SKIN_BODY:o.SKIN_BODY||SKIN_BODY});
+  document.getElementById('planEditor').classList.add('show');
+  renderPlanEditor();
+}
+function closePlanEditor(){document.getElementById('planEditor').classList.remove('show');}
+function edSwitch(k){edKind=k;renderPlanEditor();document.getElementById('planEdBody').scrollTop=0;}
+
+/* --- model updates (no re-render, keeps keyboard focus) --- */
+function edMeal(i,f,v){var m=edDiet.MEALS[i];if(f==='cal'||f==='target')v=parseInt(v)||0;if(f==='w0'){m.window[0]=parseFloat(v)||0;return;}if(f==='w1'){m.window[1]=parseFloat(v)||0;return;}m[f]=v;}
+function edItem(i,j,f,v){var it=edDiet.MEALS[i].items[j];it[f]=(f==='f')?v:(parseFloat(v)||0);edRecal(i);}
+function edRecal(i){var m=edDiet.MEALS[i];var c=0;m.items.forEach(function(it){c+=it.c||0;});m.cal=Math.round(c);var el=document.getElementById('edcal'+i);if(el)el.textContent=m.cal+' cal';}
+function edAddItem(i){edDiet.MEALS[i].items.push({f:'New food',c:0,p:0,cb:0,ft:0,fb:0});renderPlanEditor();}
+function edDelItem(i,j){edDiet.MEALS[i].items.splice(j,1);edRecal(i);renderPlanEditor();}
+function edAddMeal(){edDiet.MEALS.push({id:'m'+Date.now(),name:'New meal',icon:'\uD83E\uDD57',time:'16:00',window:[15,18],cal:0,target:0,color:'#2EE6A8',items:[],note:''});renderPlanEditor();}
+function edDelMeal(i){if(!confirm('Delete '+edDiet.MEALS[i].name+'?'))return;edDiet.MEALS.splice(i,1);renderPlanEditor();}
+function edGoal(f,v){edDiet.DIET_DAILY[f]=parseFloat(v)||0;}
+function edWin(f,v){var n=parseFloat(v);if(isNaN(n))return;SKIN_WINDOWS[f]=Math.max(0,Math.min(23,n));}
+function edSkinArr(g){return g==='SKIN_MORNING'?edSkin.SKIN_MORNING:g==='SKIN_BODY'?edSkin.SKIN_BODY:edSkin.SKIN_NIGHT[g].steps;}
+function edSkinSet(g,i,f,v){edSkinArr(g)[i][f]=(f==='wait'&&!v)?null:v;}
+function edSkinAdd(g){edSkinArr(g).push({name:'New step',det:'',wait:null});renderPlanEditor();}
+function edSkinDel(g,i){edSkinArr(g).splice(i,1);renderPlanEditor();}
+function edNightLabel(k,v){edSkin.SKIN_NIGHT[k].label=v;}
+
+function edSave(){
+  edDiet.v=DIET_VER;
+  localStorage.setItem('ab2_diet_json',JSON.stringify(edDiet));dietOverride=edDiet;
+  localStorage.setItem('ab2_skin_json',JSON.stringify(edSkin));skinOverride=edSkin;
+  skinWinSave();
+  closePlanEditor();showToast('\u2713 Plan saved');
+  if(currentTab==='eat')renderEat();else if(currentTab==='today')renderToday();
+}
+function edResetAll(){
+  if(!confirm('Reset meals AND skincare back to the built-in defaults?'))return;
+  dietOverride=null;skinOverride=null;
+  localStorage.removeItem('ab2_diet_json');localStorage.removeItem('ab2_skin_json');
+  closePlanEditor();showToast('\u2713 Reset to defaults');
+  if(currentTab==='eat')renderEat();else if(currentTab==='today')renderToday();
+}
+
+function renderPlanEditor(){
+  ['diet','skin','goals'].forEach(function(k){
+    var el=document.getElementById('edtab_'+k);if(el)el.classList.toggle('on',edKind===k);
+  });
+  var h='';
+  if(edKind==='diet'){
+    h+='<div class="ed-note">Tap a meal to open it. Change the food name, calories and macros \u2014 the meal total updates by itself. Everything is saved when you hit Save.</div>';
+    edDiet.MEALS.forEach(function(m,i){
+      var mc=mealColor(m,i);
+      h+='<details class="ed-group"><summary><span style="width:30px;height:30px;border-radius:9px;background:'+mc+';color:#0A0A12;display:flex;align-items:center;justify-content:center">'+m.icon+'</span>'+edEsc(m.name)+' <span id="edcal'+i+'" style="font-size:11px;color:var(--muted);font-weight:700">'+m.cal+' cal</span></summary><div class="ed-in">';
+      h+='<div class="ed-lbl">Meal</div>';
+      h+='<div class="ed-row"><input class="ed-f tiny" value="'+edEsc(m.icon)+'" oninput="edMeal('+i+',String.fromCharCode(105,99,111,110),this.value)"/>';
+      h+='<input class="ed-f" value="'+edEsc(m.name)+'" oninput="edMeal('+i+',String.fromCharCode(110,97,109,101),this.value)"/>';
+      h+='<input class="ed-f num" value="'+edEsc(m.time)+'" oninput="edMeal('+i+',String.fromCharCode(116,105,109,101),this.value)"/></div>';
+      h+='<div class="ed-lbl">Counts as "now" between these hours (24h)</div>';
+      h+='<div class="ed-row"><input class="ed-f num" type="number" value="'+m.window[0]+'" oninput="edMeal('+i+',String.fromCharCode(119,48),this.value)"/>';
+      h+='<span style="color:var(--muted);font-size:12px">to</span>';
+      h+='<input class="ed-f num" type="number" value="'+m.window[1]+'" oninput="edMeal('+i+',String.fromCharCode(119,49),this.value)"/></div>';
+      h+='<div class="ed-lbl">Foods \u2014 name, calories, then protein / carbs / fat / fibre</div>';
+      m.items.forEach(function(it,j){
+        h+='<div class="ed-row"><input class="ed-f" value="'+edEsc(it.f)+'" oninput="edItem('+i+','+j+',String.fromCharCode(102),this.value)"/>';
+        h+='<input class="ed-f num" type="number" value="'+(it.c||0)+'" oninput="edItem('+i+','+j+',String.fromCharCode(99),this.value)"/>';
+        h+='<button class="ed-x" onclick="edDelItem('+i+','+j+')">\u00D7</button></div>';
+        h+='<div class="ed-row" style="margin-bottom:12px">';
+        ['p','cb','ft','fb'].forEach(function(f){
+          h+='<input class="ed-f tiny" type="number" placeholder="'+f+'" value="'+(it[f]||0)+'" oninput="edItem('+i+','+j+',\''+f+'\',this.value)"/>';
+        });
+        h+='</div>';
+      });
+      h+='<button class="ed-add" onclick="edAddItem('+i+')">+ Add food</button>';
+      h+='<div class="ed-lbl">Note shown under this meal</div>';
+      h+='<div class="ed-row"><input class="ed-f" value="'+edEsc(m.note)+'" oninput="edMeal('+i+',String.fromCharCode(110,111,116,101),this.value)"/></div>';
+      h+='<button class="ed-del" style="width:100%;margin-top:8px" onclick="edDelMeal('+i+')">Delete this meal</button>';
+      h+='</div></details>';
+    });
+    h+='<button class="ed-add" onclick="edAddMeal()">+ Add a meal</button>';
+  }
+  else if(edKind==='skin'){
+    h+='<div class="ed-note">Each step has a name, a "how much / where" line, and an optional wait time. Leave the wait blank if there is none.</div>';
+    var groups=[['SKIN_MORNING','\u2600\uFE0F Morning routine','#FFB020'],
+                ['azelaic','\uD83D\uDFE0 Azelaic night','#FF8A3D'],
+                ['bha','\uD83D\uDD35 BHA night','#38BDF8'],
+                ['rest','\uD83C\uDF3F Rest night','#2EE6A8'],
+                ['SKIN_BODY','\uD83E\uDDF4 Body after shower','#2DD4BF']];
+    groups.forEach(function(g){
+      var key=g[0],arr=edSkinArr(key);
+      h+='<details class="ed-group"><summary><span style="width:10px;height:10px;border-radius:50%;background:'+g[2]+'"></span>'+g[1]+' <span style="font-size:11px;color:var(--muted);font-weight:700">'+arr.length+' steps</span></summary><div class="ed-in">';
+      if(key==='azelaic'||key==='bha'||key==='rest'){
+        h+='<div class="ed-lbl">What this night is called</div>';
+        h+='<div class="ed-row"><input class="ed-f" value="'+edEsc(edSkin.SKIN_NIGHT[key].label)+'" oninput="edNightLabel(\''+key+'\',this.value)"/></div>';
+      }
+      arr.forEach(function(s,i){
+        h+='<div class="ed-lbl">Step '+(i+1)+'</div>';
+        h+='<div class="ed-row"><input class="ed-f" value="'+edEsc(s.name)+'" oninput="edSkinSet(\''+key+'\','+i+',String.fromCharCode(110,97,109,101),this.value)"/>';
+        h+='<button class="ed-x" onclick="edSkinDel(\''+key+'\','+i+')">\u00D7</button></div>';
+        h+='<div class="ed-row"><input class="ed-f" placeholder="How much, where" value="'+edEsc(s.det)+'" oninput="edSkinSet(\''+key+'\','+i+',String.fromCharCode(100,101,116),this.value)"/></div>';
+        h+='<div class="ed-row" style="margin-bottom:12px"><input class="ed-f" placeholder="Wait time (optional)" value="'+edEsc(s.wait)+'" oninput="edSkinSet(\''+key+'\','+i+',String.fromCharCode(119,97,105,116),this.value)"/></div>';
+      });
+      h+='<button class="ed-add" onclick="edSkinAdd(\''+key+'\')">+ Add step</button>';
+      h+='</div></details>';
+    });
+  }
+  else{
+    var g=edDiet.DIET_DAILY;
+    h+='<div class="ed-note">Daily targets shown on the Eat tab, and how many glasses fill your water grid.</div>';
+    h+='<details class="ed-group" open><summary>\uD83C\uDFAF Daily targets</summary><div class="ed-in">';
+    [['cal','Calories'],['protein','Protein (g)'],['carbs','Carbs (g)'],['fat','Fat (g)'],['fibre','Fibre (g)']].forEach(function(f){
+      h+='<div class="ed-lbl">'+f[1]+'</div><div class="ed-row"><input class="ed-f" type="number" value="'+(g[f[0]]||0)+'" oninput="edGoal(\''+f[0]+'\',this.value)"/></div>';
+    });
+    h+='</div></details>';
+    h+='<details class="ed-group" open><summary>\uD83D\uDCA7 Water</summary><div class="ed-in">';
+    h+='<div class="ed-lbl">Glasses per day</div><div class="ed-row"><input class="ed-f" type="number" value="'+(g.glasses||12)+'" oninput="edGoal(String.fromCharCode(103,108,97,115,115,101,115),this.value)"/></div>';
+    h+='<div class="ed-lbl">Litres target (shown on Eat tab)</div><div class="ed-row"><input class="ed-f" type="number" step="0.1" value="'+(g.water||0)+'" oninput="edGoal(String.fromCharCode(119,97,116,101,114),this.value)"/></div>';
+    h+='</div></details>';
+    h+='<details class="ed-group" open><summary>\u23F0 Skincare timing</summary><div class="ed-in">';
+    h+='<div class="ed-note" style="margin:0 0 10px">Which hour each phase starts (24h). Right now: morning '+SKIN_WINDOWS.morning+':00, SPF reapply '+SKIN_WINDOWS.midday+':00, evening '+SKIN_WINDOWS.evening+':00, night routine '+SKIN_WINDOWS.night+':00.</div>';
+    [['morning','Morning routine starts'],['midday','Switch to SPF reapply'],['evening','Evening starts (night shown as upcoming)'],['night','Night routine is due']].forEach(function(f){
+      h+='<div class="ed-lbl">'+f[1]+'</div><div class="ed-row"><input class="ed-f" type="number" min="0" max="23" value="'+SKIN_WINDOWS[f[0]]+'" oninput="edWin(\''+f[0]+'\',this.value)"/></div>';
+    });
+    h+='</div></details>';
+    h+='<button class="ed-del" style="width:100%;margin-top:10px" onclick="edResetAll()">Reset meals & skincare to defaults</button>';
+  }
+  document.getElementById('planEdBody').innerHTML=h;
 }
 
 // ============ SAVE AS IMAGE ============
@@ -2528,9 +2916,27 @@ if('serviceWorker' in navigator){
 }
 
 // ============ INIT ============
+// Keep the "right now" card honest: re-check the clock every minute and on resume.
+var _lastPhase='';
+function phaseStamp(){var s=skincareNow();var m=currentMeal();return s.mode+'|'+s.key+'|'+(m?m.id:'-');}
+function tickClock(){
+  var st=phaseStamp();
+  if(st!==_lastPhase){
+    _lastPhase=st;
+    if(currentTab==='today')renderToday();
+    else if(currentTab==='eat')renderEat();
+  }else if(currentTab==='today'){
+    renderToday();
+  }
+}
+document.addEventListener('visibilitychange',function(){if(!document.hidden)tickClock();});
+window.addEventListener('focus',function(){tickClock();});
+
 document.addEventListener('DOMContentLoaded',function(){
   renderPhaseBar();
   switchTab('today');
+  _lastPhase=phaseStamp();
+  setInterval(tickClock,60000);
   mediaLoadKeys(function(){
     if(currentTab==='today')renderToday();
   });
